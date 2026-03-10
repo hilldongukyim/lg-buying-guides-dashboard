@@ -294,6 +294,102 @@ body {
 .toast.show { opacity: 1; transform: translateY(0); }
 .tab-content { display: none; }
 .tab-content.active { display: block; }
+
+/* Expert Analysis Styles */
+.exec-summary {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px; margin-bottom: 24px;
+  border-left: 4px solid var(--accent);
+}
+.exec-summary h3 { font-size: 16px; margin-bottom: 12px; color: var(--accent2); }
+.exec-summary p { font-size: 14px; line-height: 1.8; color: var(--text); margin-bottom: 8px; }
+
+.country-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; margin-bottom: 16px;
+}
+.country-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+}
+.country-card-header h3 { font-size: 16px; font-weight: 600; }
+.status-pill {
+  padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+  text-transform: uppercase;
+}
+.status-pill.growing { background: rgba(34,197,94,0.15); color: var(--green); }
+.status-pill.stable { background: rgba(99,102,241,0.15); color: var(--accent2); }
+.status-pill.declining { background: rgba(239,68,68,0.15); color: var(--red); }
+
+.country-metrics {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px; margin-bottom: 16px;
+}
+.country-metric { text-align: center; }
+.country-metric .cm-value { font-size: 20px; font-weight: 700; }
+.country-metric .cm-label { font-size: 11px; color: var(--text2); }
+
+.link-chips {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;
+}
+.link-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 6px; font-size: 11px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--accent2); text-decoration: none; transition: all 0.15s;
+}
+.link-chip:hover { border-color: var(--accent); background: rgba(99,102,241,0.1); }
+.link-chip.live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.link-chip.pending::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--yellow); }
+.link-chip.offline::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--text2); }
+
+.analyst-note {
+  background: var(--surface2); border-radius: 8px; padding: 12px 16px;
+  font-size: 13px; line-height: 1.7; color: var(--text); margin-top: 8px;
+  border-left: 2px solid var(--accent2);
+}
+.analyst-note strong { color: var(--accent2); }
+
+.todo-list { list-style: none; }
+.todo-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  font-size: 13px; line-height: 1.6;
+}
+.todo-list li:last-child { border-bottom: none; }
+.todo-icon {
+  width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; margin-top: 2px;
+}
+.todo-icon.red { background: rgba(239,68,68,0.15); color: var(--red); }
+.todo-icon.yellow { background: rgba(234,179,8,0.15); color: var(--yellow); }
+.todo-icon.blue { background: rgba(99,102,241,0.15); color: var(--accent2); }
+.todo-icon.green { background: rgba(34,197,94,0.15); color: var(--green); }
+
+.direction-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; margin-bottom: 16px;
+  border-left: 4px solid var(--green);
+}
+.direction-card h4 { font-size: 14px; color: var(--green); margin-bottom: 8px; }
+.direction-card p { font-size: 13px; line-height: 1.7; }
+
+.sub-tabs {
+  display: flex; gap: 4px; margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.sub-tab {
+  padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border);
+  background: transparent; color: var(--text2); font-size: 12px;
+  cursor: pointer; transition: all 0.15s;
+}
+.sub-tab.active { border-color: var(--accent); color: var(--accent2); background: rgba(99,102,241,0.1); }
+
+.ranking-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+.ranking-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); }
+.ranking-table td:first-child { font-weight: 600; color: var(--accent2); width: 30px; }
+.ranking-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
@@ -354,12 +450,19 @@ body {
   </div>
 
   <div class="tab-content" id="tab-insights">
-    <div class="section-title" data-i18n="data_insights">Data-Driven Insights</div>
-    <div class="insights-grid" id="insightsGrid"></div>
-    <div class="section-title" style="margin-top:32px" data-i18n="action_items_title">Action Items for the Team</div>
-    <div class="action-items" id="actionItems"></div>
-    <div class="section-title" style="margin-top:32px" data-i18n="analyst_notes">Per-Page Analyst Notes</div>
-    <div class="insights-grid" id="analystNotes"></div>
+    <!-- Sub-tabs for Insights sections -->
+    <div class="sub-tabs" id="insightSubTabs">
+      <button class="sub-tab active" data-stab="executive" data-i18n="stab_executive">Executive Summary</button>
+      <button class="sub-tab" data-stab="countries" data-i18n="stab_countries">Country Reports</button>
+      <button class="sub-tab" data-stab="categories" data-i18n="stab_categories">Category Comparison</button>
+      <button class="sub-tab" data-stab="actions" data-i18n="stab_actions">Action To-Dos</button>
+      <button class="sub-tab" data-stab="direction" data-i18n="stab_direction">Content Direction</button>
+    </div>
+    <div id="insightPanel-executive"></div>
+    <div id="insightPanel-countries" style="display:none"></div>
+    <div id="insightPanel-categories" style="display:none"></div>
+    <div id="insightPanel-actions" style="display:none"></div>
+    <div id="insightPanel-direction" style="display:none"></div>
   </div>
 
   <div class="tab-content" id="tab-status">
@@ -471,6 +574,59 @@ const I18N = {
     act_seo_desc: 'have low organic share (<30%). Optimize meta tags, improve internal linking, and consider structured data for better search visibility.',
     act_monitor: 'Continue monitoring:',
     act_monitor_desc: 'month(s) of data, trends are still forming. Focus on building consistent month-over-month improvements. Ensure all new monthly data files are placed in the data directory and click Refresh.',
+
+    // Content types
+    all_content_types: 'All Content',
+    ctype_lineup: 'Lineup Guide',
+    ctype_feature_library: 'Feature Library',
+
+    // Expert analysis
+    stab_executive: 'Executive Summary',
+    stab_countries: 'Country Reports',
+    stab_categories: 'Category Comparison',
+    stab_actions: 'Action To-Dos',
+    stab_direction: 'Content Direction',
+    exec_title: 'Executive Summary',
+    exec_overview: 'Overall Performance Overview',
+    exec_sessions: 'Total Sessions',
+    exec_clicks: 'Total Clicks',
+    exec_plp: 'Avg PLP Conv.',
+    exec_purchase: 'Avg Purchase Conv.',
+    exec_pages: 'Pages Tracked',
+    exec_top_plp: 'Top PLP Conversion Pages',
+    exec_low_plp: 'Low PLP Conversion Pages',
+    exec_mom: 'MoM Change',
+    country_sessions: 'Sessions',
+    country_clicks: 'Clicks',
+    country_plp: 'PLP Conv.',
+    country_purchase: 'Purchase Conv.',
+    country_duration: 'Avg Duration',
+    country_links_title: 'Page Links',
+    country_analyst_title: 'Analyst Notes',
+    country_product_title: 'Per-Product Breakdown',
+    cat_total_sessions: 'Total Sessions',
+    cat_avg_plp: 'Avg PLP Conv.',
+    cat_countries: 'Countries',
+    cat_rank_sessions: 'Session Rankings',
+    cat_rank_plp: 'PLP Conv. Rankings',
+    cat_rank_duration: 'Duration Rankings',
+    act_title: 'Action Items & To-Dos',
+    act_priority_high: 'HIGH',
+    act_priority_medium: 'MEDIUM',
+    act_priority_low: 'LOW',
+    dir_title: 'Content Team Direction',
+    dir_high_perf: 'High Performers — Scale & Optimize',
+    dir_high_perf_desc: 'These markets show strong engagement and conversion. Focus on replicating success patterns, expanding content depth, and A/B testing to further optimize.',
+    dir_growth: 'Growth Opportunities — Invest & Improve',
+    dir_growth_desc: 'Markets with moderate traffic but room for improvement. Prioritize SEO optimization, internal linking, and localized content enhancements.',
+    dir_emerging: 'Emerging / Low Traffic — Build Foundation',
+    dir_emerging_desc: 'Low-traffic markets need foundational SEO work, better discoverability through internal navigation, and monitoring for trend shifts.',
+    dir_declining: 'Declining — Diagnose & Act',
+    dir_declining_desc: 'Markets showing decline need immediate investigation. Check for technical issues, content staleness, competitive changes, or seasonal patterns.',
+    no_analyst_notes: 'No analyst notes available for this country yet.',
+    growing: 'Growing',
+    stable: 'Stable',
+    declining: 'Declining',
   },
   ko: {
     title: '바잉 가이드 — GA 성과 대시보드',
@@ -563,6 +719,59 @@ const I18N = {
     act_seo_desc: '오가닉 유입 비율이 낮습니다 (<30%). 메타 태그 최적화, 내부 링킹 개선, 구조화 데이터 적용을 검토하세요.',
     act_monitor: '지속 모니터링:',
     act_monitor_desc: '개월 데이터로 추세가 형성 중입니다. 월별 꾸준한 개선에 집중하세요. 새 월별 데이터 파일을 폴더에 넣고 새로고침을 클릭하세요.',
+
+    // Content types
+    all_content_types: '전체 콘텐츠',
+    ctype_lineup: '라인업 가이드',
+    ctype_feature_library: '피쳐 라이브러리',
+
+    // Expert analysis
+    stab_executive: '종합 요약',
+    stab_countries: '국가별 리포트',
+    stab_categories: '카테고리 비교',
+    stab_actions: '액션 To-Do',
+    stab_direction: '콘텐츠 방향성',
+    exec_title: '종합 요약',
+    exec_overview: '전체 성과 개요',
+    exec_sessions: '총 세션',
+    exec_clicks: '총 클릭',
+    exec_plp: '평균 PLP 전환율',
+    exec_purchase: '평균 구매 전환율',
+    exec_pages: '추적 페이지',
+    exec_top_plp: 'PLP 전환 상위 페이지',
+    exec_low_plp: 'PLP 전환 하위 페이지',
+    exec_mom: '전월 대비',
+    country_sessions: '세션',
+    country_clicks: '클릭',
+    country_plp: 'PLP 전환율',
+    country_purchase: '구매 전환율',
+    country_duration: '평균 체류시간',
+    country_links_title: '페이지 링크',
+    country_analyst_title: '분석가 노트',
+    country_product_title: '제품별 분석',
+    cat_total_sessions: '총 세션',
+    cat_avg_plp: '평균 PLP 전환율',
+    cat_countries: '국가 수',
+    cat_rank_sessions: '세션 순위',
+    cat_rank_plp: 'PLP 전환율 순위',
+    cat_rank_duration: '체류시간 순위',
+    act_title: '액션 아이템 & To-Do',
+    act_priority_high: '높음',
+    act_priority_medium: '중간',
+    act_priority_low: '낮음',
+    dir_title: '콘텐츠 팀 방향성',
+    dir_high_perf: '고성과 시장 — 확대 & 최적화',
+    dir_high_perf_desc: '높은 참여율과 전환율을 보이는 시장입니다. 성공 패턴을 복제하고, 콘텐츠 깊이를 확대하며, A/B 테스트를 통해 추가 최적화하세요.',
+    dir_growth: '성장 기회 시장 — 투자 & 개선',
+    dir_growth_desc: '적절한 트래픽이 있지만 개선 여지가 있는 시장입니다. SEO 최적화, 내부 링킹, 현지화 콘텐츠 강화에 집중하세요.',
+    dir_emerging: '신흥 / 저트래픽 — 기반 구축',
+    dir_emerging_desc: '저트래픽 시장은 기초 SEO 작업, 내부 네비게이션을 통한 발견성 향상, 추세 변화 모니터링이 필요합니다.',
+    dir_declining: '하락세 — 진단 & 조치',
+    dir_declining_desc: '하락세를 보이는 시장은 즉각적인 조사가 필요합니다. 기술적 이슈, 콘텐츠 노후화, 경쟁 변화, 계절성 패턴을 확인하세요.',
+    no_analyst_notes: '아직 이 국가에 대한 분석가 노트가 없습니다.',
+    growing: '성장',
+    stable: '안정',
+    declining: '하락',
   }
 };
 
@@ -607,6 +816,7 @@ let DATA = null;
 let charts = {};
 let selectedCountry = 'ALL';
 let selectedCategory = 'ALL';
+let selectedContentType = 'ALL';
 
 const COLORS = {
   UK: '#6366f1', FR: '#22c55e', PL: '#f97316', ES: '#eab308',
@@ -729,7 +939,19 @@ function render() {
 
 function renderFilters() {
   const el = document.getElementById('filters');
-  let html = `<button class="btn btn-outline active" data-filter="country" data-val="ALL">${t('all_countries')}</button>`;
+  const ctypes = DATA.meta.content_types || ['lineup'];
+
+  // Content type filter
+  let html = '';
+  if (ctypes.length > 1) {
+    html += `<button class="btn btn-outline active" data-filter="ctype" data-val="ALL">${t('all_content_types')}</button>`;
+    ctypes.forEach(ct => {
+      html += `<button class="btn btn-outline" data-filter="ctype" data-val="${ct}">${t('ctype_' + ct)}</button>`;
+    });
+    html += '<span style="width:12px"></span>';
+  }
+
+  html += `<button class="btn btn-outline active" data-filter="country" data-val="ALL">${t('all_countries')}</button>`;
   DATA.meta.countries.forEach(c => {
     html += `<button class="btn btn-outline" data-filter="country" data-val="${c}">${countryName(c)}</button>`;
   });
@@ -747,6 +969,7 @@ function renderFilters() {
       el.querySelectorAll(`[data-filter="${filterType}"]`).forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       if (filterType === 'country') selectedCountry = val;
+      else if (filterType === 'ctype') selectedContentType = val;
       else selectedCategory = val;
       render();
     });
@@ -755,6 +978,7 @@ function renderFilters() {
 
 function getFilteredSheets() {
   return Object.entries(DATA.monthly_data).filter(([key, val]) => {
+    if (selectedContentType !== 'ALL' && (val.content_type || 'lineup') !== selectedContentType) return false;
     if (selectedCountry !== 'ALL' && val.country !== selectedCountry) return false;
     if (selectedCategory !== 'ALL' && val.category !== selectedCategory) return false;
     return true;
@@ -774,8 +998,21 @@ function findMetric(metrics, ...keywords) {
 }
 
 function getMetricValue(metrics, month, ...keywords) {
-  const m = findMetric(metrics, ...keywords);
-  if (!m || !m.monthly[month]) return null;
+  let m = findMetric(metrics, ...keywords);
+  // Fallback: try spec_library variants if lineup keywords fail
+  if (!m) {
+    const alt = keywords.map(kw => {
+      if (kw === 'lineup') return 'spec_library';
+      if (kw === 'tv_lineup') return 'tv_spec_library';
+      if (kw === 'monitor_lineup') return 'monitor_spec_library';
+      if (kw === 'line_up') return 'spec_library';
+      if (kw === 'line_up_guide') return 'spec_library';
+      if (kw === 'guide_event_click') return 'library_event_click';
+      return kw;
+    });
+    if (alt.join() !== keywords.join()) m = findMetric(metrics, ...alt);
+  }
+  if (!m || !m.monthly || !m.monthly[month]) return null;
   return m.monthly[month];
 }
 
@@ -900,7 +1137,8 @@ function renderComparisonTable(sheets,latest,prev){
 
   sheets.forEach(([key,data])=>{
     const m=data.metrics_2026;
-    const label=`${data.category} ${countryName(data.country)}`;
+    const ctypeTag=selectedContentType==='ALL'&&data.content_type?(data.content_type==='feature_library'?' [FL]':' [LG]'):'';
+    const label=`${data.category} ${countryName(data.country)}${ctypeTag}`;
     const sess=getMetricValue(m,latest,'lineup','session')||getMetricValue(m,latest,'tv_lineup','session')||getMetricValue(m,latest,'monitor_lineup','session')||0;
     const prevSess=prev?(getMetricValue(m,prev,'lineup','session')||getMetricValue(m,prev,'tv_lineup','session')||getMetricValue(m,prev,'monitor_lineup','session')||0):0;
     const pv=getMetricValue(m,latest,'line_up')||0;
@@ -1088,41 +1326,264 @@ function renderConversion(){
 // Insights & Actions
 // ============================================================
 function renderInsights(){
-  const sheets=getFilteredSheets(),latest=getLatestMonth(),prev=getPrevMonth();
+  // Setup sub-tab switching
+  document.querySelectorAll('#insightSubTabs .sub-tab').forEach(btn=>{
+    btn.onclick=()=>{
+      document.querySelectorAll('#insightSubTabs .sub-tab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      ['executive','countries','categories','actions','direction'].forEach(p=>{
+        document.getElementById('insightPanel-'+p).style.display=p===btn.dataset.stab?'block':'none';
+      });
+    };
+  });
 
-  const filteredInsights=DATA.insights.filter(ins=>{
+  // Use content-type-specific data when filtered, otherwise overall
+  const expert=DATA.expert||{};
+  const pct=expert.per_content_type||{};
+  const activeExpert=(selectedContentType!=='ALL'&&pct[selectedContentType])?pct[selectedContentType]:expert;
+
+  renderExecutivePanel(activeExpert, expert);
+  renderCountryReports(activeExpert);
+  renderCategoryComparison(activeExpert);
+  renderActionTodos(activeExpert);
+  renderContentDirection(activeExpert, expert);
+}
+
+function renderExecutivePanel(activeExpert, fullExpert){
+  const ex=activeExpert.executive||{};
+  const el=document.getElementById('insightPanel-executive');
+  const momClass=(ex.session_change_pct||0)>=0?'up':'down';
+  const momSign=(ex.session_change_pct||0)>=0?'+':'';
+
+  const topRows=(ex.top_plp_pages||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${r[0]}</td><td>${(r[1]*100).toFixed(1)}%</td></tr>`).join('');
+  const lowRows=(ex.low_plp_pages||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${r[0]}</td><td>${(r[1]*100).toFixed(1)}%</td></tr>`).join('');
+
+  // Content type comparison cards (only when viewing ALL)
+  let comparisonHtml='';
+  const pct=(fullExpert||activeExpert).per_content_type||{};
+  if(selectedContentType==='ALL'&&Object.keys(pct).length>1){
+    comparisonHtml=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:24px;">`;
+    for(const [ct,data] of Object.entries(pct)){
+      const ce=data.executive||{};
+      const cms=(ce.session_change_pct||0)>=0?'+':'';
+      comparisonHtml+=`<div class="exec-summary" style="border-left-color:${ct==='lineup'?'var(--accent)':'var(--orange)'};">
+        <h3 style="color:${ct==='lineup'?'var(--accent2)':'var(--orange)'};">${t('ctype_'+ct)}</h3>
+        <div class="country-metrics">
+          <div class="country-metric"><div class="cm-value">${formatNum(ce.total_sessions||0)}</div><div class="cm-label">${t('exec_sessions')}</div></div>
+          <div class="country-metric"><div class="cm-value">${formatNum(ce.total_clicks||0)}</div><div class="cm-label">${t('exec_clicks')}</div></div>
+          <div class="country-metric"><div class="cm-value">${((ce.avg_plp_conv||0)*100).toFixed(1)}%</div><div class="cm-label">${t('exec_plp')}</div></div>
+          <div class="country-metric"><div class="cm-value">${((ce.avg_purchase_conv||0)*100).toFixed(2)}%</div><div class="cm-label">${t('exec_purchase')}</div></div>
+          <div class="country-metric"><div class="cm-value">${ce.total_pages_tracked||0}</div><div class="cm-label">${t('exec_pages')}</div></div>
+          <div class="country-metric"><div class="cm-value kpi-change ${(ce.session_change_pct||0)>=0?'up':'down'}">${cms}${(ce.session_change_pct||0).toFixed(1)}%</div><div class="cm-label">${t('exec_mom')}</div></div>
+        </div>
+      </div>`;
+    }
+    comparisonHtml+=`</div>`;
+  }
+
+  el.innerHTML=`
+    <div class="exec-summary">
+      <h3>${t('exec_title')} — ${ex.latest_month||''} 2026</h3>
+      <div class="country-metrics">
+        <div class="country-metric"><div class="cm-value">${formatNum(ex.total_sessions||0)}</div><div class="cm-label">${t('exec_sessions')}</div></div>
+        <div class="country-metric"><div class="cm-value">${formatNum(ex.total_clicks||0)}</div><div class="cm-label">${t('exec_clicks')}</div></div>
+        <div class="country-metric"><div class="cm-value">${((ex.avg_plp_conv||0)*100).toFixed(1)}%</div><div class="cm-label">${t('exec_plp')}</div></div>
+        <div class="country-metric"><div class="cm-value">${((ex.avg_purchase_conv||0)*100).toFixed(2)}%</div><div class="cm-label">${t('exec_purchase')}</div></div>
+        <div class="country-metric"><div class="cm-value">${ex.total_pages_tracked||0}</div><div class="cm-label">${t('exec_pages')}</div></div>
+        <div class="country-metric"><div class="cm-value kpi-change ${momClass}">${momSign}${(ex.session_change_pct||0).toFixed(1)}%</div><div class="cm-label">${t('exec_mom')}</div></div>
+      </div>
+    </div>
+    ${comparisonHtml}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+      <div class="exec-summary" style="border-left-color:var(--green);">
+        <h3 style="color:var(--green);">${t('exec_top_plp')}</h3>
+        <table class="ranking-table">${topRows}</table>
+      </div>
+      <div class="exec-summary" style="border-left-color:var(--red);">
+        <h3 style="color:var(--red);">${t('exec_low_plp')}</h3>
+        <table class="ranking-table">${lowRows}</table>
+      </div>
+    </div>`;
+}
+
+function renderCountryReports(expert){
+  const reports=expert.country_reports||{};
+  const el=document.getElementById('insightPanel-countries');
+  let html='';
+
+  // Sort: filter by selected country/category
+  let countries=Object.keys(reports).sort((a,b)=>(reports[b].total_sessions||0)-(reports[a].total_sessions||0));
+  if(selectedCountry!=='ALL') countries=countries.filter(c=>c===selectedCountry);
+
+  countries.forEach(code=>{
+    const r=reports[code];
+    const statusLabel=t(r.status)||r.status;
+    const momSign=(r.session_change_pct||0)>=0?'+':'';
+
+    // Link chips
+    const links=(r.links||[]).filter(l=>l.link).map(l=>{
+      const statusCls=l.live_status==='LIVE'?'live':l.live_status?'pending':'offline';
+      const label=l.type||l.category||'Link';
+      return `<a href="${l.link}" target="_blank" class="link-chip ${statusCls}" title="${l.category} ${l.type}">${label}</a>`;
+    }).join('');
+
+    // Per-product breakdown
+    let productHtml='';
+    if(r.per_product){
+      const cats=Object.keys(r.per_product);
+      if(selectedCategory!=='ALL') {
+        const filtered=cats.filter(c=>c.toUpperCase()===selectedCategory.toUpperCase());
+        if(filtered.length>0){
+          filtered.forEach(cat=>{
+            productHtml+=renderProductBlock(cat,r.per_product[cat]);
+          });
+        }
+      } else {
+        cats.forEach(cat=>{
+          productHtml+=renderProductBlock(cat,r.per_product[cat]);
+        });
+      }
+    }
+
+    // Analyst notes
+    let notesHtml='';
+    if(r.analyst_notes&&r.analyst_notes.length>0){
+      r.analyst_notes.forEach(an=>{
+        notesHtml+=`<div class="analyst-note"><strong>${an.page}</strong><br>${an.notes.map(n=>`<div style="margin-top:4px;">${n}</div>`).join('')}</div>`;
+      });
+    } else {
+      notesHtml=`<div class="analyst-note" style="color:var(--text2);">${t('no_analyst_notes')}</div>`;
+    }
+
+    html+=`
+    <div class="country-card">
+      <div class="country-card-header">
+        <h3>${countryName(code)} (${code})</h3>
+        <span class="status-pill ${r.status}">${statusLabel}</span>
+      </div>
+      <div class="country-metrics">
+        <div class="country-metric"><div class="cm-value">${formatNum(r.total_sessions||0)}</div><div class="cm-label">${t('country_sessions')}</div></div>
+        <div class="country-metric"><div class="cm-value">${formatNum(r.total_clicks||0)}</div><div class="cm-label">${t('country_clicks')}</div></div>
+        <div class="country-metric"><div class="cm-value">${((r.avg_plp_conv||0)*100).toFixed(1)}%</div><div class="cm-label">${t('country_plp')}</div></div>
+        <div class="country-metric"><div class="cm-value">${((r.avg_purchase_conv||0)*100).toFixed(2)}%</div><div class="cm-label">${t('country_purchase')}</div></div>
+        <div class="country-metric"><div class="cm-value">${r.avg_duration?r.avg_duration+'s':'—'}</div><div class="cm-label">${t('country_duration')}</div></div>
+        <div class="country-metric"><div class="cm-value kpi-change ${(r.session_change_pct||0)>=0?'up':'down'}">${momSign}${(r.session_change_pct||0).toFixed(1)}%</div><div class="cm-label">${t('exec_mom')}</div></div>
+      </div>
+      <div style="margin-bottom:12px;"><strong style="font-size:12px;color:var(--text2);">${t('country_links_title')}</strong><div class="link-chips" style="margin-top:6px;">${links}</div></div>
+      ${productHtml?`<div style="margin-bottom:12px;"><strong style="font-size:12px;color:var(--text2);">${t('country_product_title')}</strong>${productHtml}</div>`:''}
+      <div><strong style="font-size:12px;color:var(--text2);">${t('country_analyst_title')}</strong>${notesHtml}</div>
+    </div>`;
+  });
+
+  el.innerHTML=html||`<p style="color:var(--text2);">No country reports available.</p>`;
+}
+
+function renderProductBlock(cat,data){
+  if(!data) return '';
+  return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin:8px 0;padding:10px;background:var(--surface2);border-radius:8px;">
+    <div style="font-weight:600;color:var(--accent2);grid-column:1/-1;">${cat}</div>
+    <div class="country-metric"><div class="cm-value" style="font-size:16px;">${formatNum(data.sessions||0)}</div><div class="cm-label">${t('country_sessions')}</div></div>
+    <div class="country-metric"><div class="cm-value" style="font-size:16px;">${formatNum(data.page_views||0)}</div><div class="cm-label">Page Views</div></div>
+    <div class="country-metric"><div class="cm-value" style="font-size:16px;">${((data.plp_conv||0)*100).toFixed(1)}%</div><div class="cm-label">${t('country_plp')}</div></div>
+    <div class="country-metric"><div class="cm-value" style="font-size:16px;">${((data.purchase_conv||0)*100).toFixed(2)}%</div><div class="cm-label">${t('country_purchase')}</div></div>
+    <div class="country-metric"><div class="cm-value" style="font-size:16px;">${data.duration?data.duration+'s':'—'}</div><div class="cm-label">${t('country_duration')}</div></div>
+    <div class="country-metric"><div class="cm-value" style="font-size:16px;">${formatNum(data.clicks||0)}</div><div class="cm-label">${t('country_clicks')}</div></div>
+  </div>`;
+}
+
+function renderCategoryComparison(expert){
+  const cats=expert.category_reports||{};
+  const el=document.getElementById('insightPanel-categories');
+  let html='';
+
+  Object.keys(cats).forEach(cat=>{
+    const c=cats[cat];
+    html+=`<div class="exec-summary" style="margin-bottom:20px;">
+      <h3>${cat}</h3>
+      <div class="country-metrics" style="margin-bottom:16px;">
+        <div class="country-metric"><div class="cm-value">${formatNum(c.total_sessions||0)}</div><div class="cm-label">${t('cat_total_sessions')}</div></div>
+        <div class="country-metric"><div class="cm-value">${((c.avg_plp_conv||0)*100).toFixed(1)}%</div><div class="cm-label">${t('cat_avg_plp')}</div></div>
+        <div class="country-metric"><div class="cm-value">${c.countries_count||0}</div><div class="cm-label">${t('cat_countries')}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
+        <div><strong style="font-size:12px;color:var(--text2);">${t('cat_rank_sessions')}</strong>
+          <table class="ranking-table">${(c.ranked_sessions||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${countryName(r[0])}</td><td>${formatNum(r[1]||0)}</td></tr>`).join('')}</table>
+        </div>
+        <div><strong style="font-size:12px;color:var(--text2);">${t('cat_rank_plp')}</strong>
+          <table class="ranking-table">${(c.ranked_plp||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${countryName(r[0])}</td><td>${(r[1]*100).toFixed(1)}%</td></tr>`).join('')}</table>
+        </div>
+        <div><strong style="font-size:12px;color:var(--text2);">${t('cat_rank_duration')}</strong>
+          <table class="ranking-table">${(c.ranked_duration||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${countryName(r[0])}</td><td>${r[1]||0}s</td></tr>`).join('')}</table>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  el.innerHTML=html||`<p style="color:var(--text2);">No category data.</p>`;
+}
+
+function renderActionTodos(expert){
+  const el=document.getElementById('insightPanel-actions');
+  const sheets=getFilteredSheets(),latest=getLatestMonth(),prev=getPrevMonth();
+  const actions=generateActionItems(sheets,latest,prev);
+
+  // Also add insight-based actions from DATA.insights
+  const filteredInsights=(DATA.insights||[]).filter(ins=>{
     if(selectedCountry!=='ALL'&&!ins.page.includes(selectedCountry))return false;
     if(selectedCategory!=='ALL'&&!ins.page.includes(selectedCategory))return false;
     return true;
+  }).sort((a,b)=>{const p={high:0,medium:1};return(p[a.priority]||2)-(p[b.priority]||2);});
+
+  let html=`<div class="exec-summary"><h3>${t('act_title')}</h3><ul class="todo-list">`;
+
+  // Generated action items
+  actions.forEach(a=>{
+    const iconCls=a.urgency==='urgent'?'red':a.urgency==='improve'?'yellow':'blue';
+    const iconTxt=a.urgency==='urgent'?'!!':a.urgency==='improve'?'!':'i';
+    html+=`<li><div class="todo-icon ${iconCls}">${iconTxt}</div><div>${a.text}</div></li>`;
   });
 
-  const insightsEl=document.getElementById('insightsGrid');
-  if(filteredInsights.length===0){
-    insightsEl.innerHTML=`<p style="color:var(--text2);">${t('no_insights')}</p>`;
-  } else {
-    insightsEl.innerHTML=filteredInsights.sort((a,b)=>{const p={high:0,medium:1};return(p[a.priority]||2)-(p[b.priority]||2);}).map(ins=>`
-      <div class="insight-card ${ins.type}">
+  html+=`</ul></div>`;
+
+  // Data insights cards
+  if(filteredInsights.length>0){
+    html+=`<div style="margin-top:20px;"><div class="section-title" style="margin-bottom:12px;">${t('data_insights')}</div><div class="insights-grid">`;
+    filteredInsights.forEach(ins=>{
+      html+=`<div class="insight-card ${ins.type}">
         <div class="insight-header"><span class="insight-page">${ins.page}</span><span class="priority-badge ${ins.priority}">${ins.priority}</span></div>
         <div class="insight-text">${ins.message}</div>
-      </div>`).join('');
+      </div>`;
+    });
+    html+=`</div></div>`;
   }
 
-  const actionEl=document.getElementById('actionItems');
-  const actions=generateActionItems(sheets,latest,prev);
-  actionEl.innerHTML=actions.map(a=>`
-    <div class="action-item">
-      <div class="action-icon ${a.urgency}">${a.icon}</div>
-      <div class="action-text">${a.text}</div>
-    </div>`).join('');
+  el.innerHTML=html;
+}
 
-  const notesEl=document.getElementById('analystNotes');
-  let notesHtml='';
-  sheets.forEach(([key,data])=>{
-    if(data.insights&&data.insights.length>0){
-      notesHtml+=`<div class="insight-card info"><div class="insight-header"><span class="insight-page">${data.category} ${countryName(data.country)}</span></div>${data.insights.map(tx=>`<div class="insight-text">${tx}</div>`).join('')}</div>`;
-    }
+function renderContentDirection(activeExpert, fullExpert){
+  const el=document.getElementById('insightPanel-direction');
+  const reports=activeExpert.country_reports||{};
+
+  // Classify countries by status
+  const growing=[],stable=[],declining=[];
+  Object.keys(reports).forEach(code=>{
+    const r=reports[code];
+    const label=`${countryName(code)} (${formatNum(r.total_sessions||0)} sessions)`;
+    if(r.status==='growing') growing.push(label);
+    else if(r.status==='stable') stable.push(label);
+    else declining.push(label);
   });
-  notesEl.innerHTML=notesHtml||`<p style="color:var(--text2);">${t('no_notes')}</p>`;
+
+  // Identify high performers (stable/growing with high PLP)
+  const highPerf=Object.entries(reports).filter(([,r])=>(r.status==='growing'||r.status==='stable')&&(r.avg_plp_conv||0)>0.35).map(([c])=>countryName(c));
+
+  el.innerHTML=`
+    <div class="exec-summary"><h3>${t('dir_title')}</h3></div>
+    ${highPerf.length>0?`<div class="direction-card"><h4>${t('dir_high_perf')}</h4><p><strong>${highPerf.join(', ')}</strong><br>${t('dir_high_perf_desc')}</p></div>`:''}
+    ${stable.length>0?`<div class="direction-card" style="border-left-color:var(--accent2);"><h4 style="color:var(--accent2);">${t('dir_growth')}</h4><p><strong>${stable.join(', ')}</strong><br>${t('dir_growth_desc')}</p></div>`:''}
+    ${growing.length>0?`<div class="direction-card" style="border-left-color:var(--yellow);"><h4 style="color:var(--yellow);">${t('dir_emerging')}</h4><p><strong>${growing.join(', ')}</strong><br>${t('dir_emerging_desc')}</p></div>`:''}
+    ${declining.length>0?`<div class="direction-card" style="border-left-color:var(--red);"><h4 style="color:var(--red);">${t('dir_declining')}</h4><p><strong>${declining.join(', ')}</strong><br>${t('dir_declining_desc')}</p></div>`:''}
+  `;
 }
 
 function generateActionItems(sheets,latest,prev){

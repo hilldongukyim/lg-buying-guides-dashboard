@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LG Buying Guides - GA Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+/* =========== DARK THEME (default) =========== */
+:root, [data-theme="dark"] {
+  --bg: #0f0f14;
+  --surface: #1a1a24;
+  --surface2: #22222e;
+  --border: #2a2a3a;
+  --text: #e4e4ef;
+  --text2: #8888a0;
+  --accent: #6366f1;
+  --accent2: #818cf8;
+  --green: #22c55e;
+  --red: #ef4444;
+  --yellow: #eab308;
+  --orange: #f97316;
+  --chart-grid: rgba(42,42,58,0.5);
+  --chart-text: #8888a0;
+  --hover-row: rgba(99,102,241,0.03);
+}
+
+/* =========== LIGHT THEME =========== */
+[data-theme="light"] {
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --surface2: #f0f0f3;
+  --border: #e0e0e6;
+  --text: #1a1a2e;
+  --text2: #6b6b80;
+  --accent: #4f46e5;
+  --accent2: #6366f1;
+  --green: #16a34a;
+  --red: #dc2626;
+  --yellow: #ca8a04;
+  --orange: #ea580c;
+  --chart-grid: rgba(0,0,0,0.06);
+  --chart-text: #6b6b80;
+  --hover-row: rgba(79,70,229,0.04);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+  transition: background 0.25s, color 0.25s;
+}
+
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.header h1 { font-size: 18px; font-weight: 600; }
+.header h1 span { color: var(--accent2); }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-actions .last-updated {
+  font-size: 12px;
+  color: var(--text2);
+  margin-right: 4px;
+}
+
+/* Toggle pill buttons */
+.toggle-group {
+  display: flex;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.toggle-group button {
+  padding: 5px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.toggle-group button.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent2); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-outline {
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border);
+}
+
+.btn-outline:hover { border-color: var(--accent); color: var(--accent2); }
+.btn-outline.active { border-color: var(--accent); color: var(--accent2); background: rgba(99,102,241,0.1); }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  transition: background 0.2s;
+}
+
+.kpi-card .kpi-label { font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.kpi-card .kpi-value { font-size: 28px; font-weight: 700; }
+.kpi-card .kpi-change { font-size: 12px; margin-top: 4px; }
+.kpi-change.up { color: var(--green); }
+.kpi-change.down { color: var(--red); }
+.kpi-change.neutral { color: var(--text2); }
+
+.section-title {
+  font-size: 16px; font-weight: 600; margin-bottom: 16px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.section-title .badge {
+  font-size: 11px; padding: 2px 8px; border-radius: 10px;
+  background: rgba(99,102,241,0.15); color: var(--accent2);
+}
+
+.charts-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 16px; margin-bottom: 32px;
+}
+
+@media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
+
+.chart-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; transition: background 0.2s;
+}
+
+.chart-card h3 { font-size: 14px; font-weight: 500; color: var(--text2); margin-bottom: 12px; }
+.chart-card canvas { max-height: 280px; }
+
+.insights-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 16px; margin-bottom: 32px;
+}
+
+.insight-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 20px; border-left: 3px solid;
+}
+
+.insight-card.warning { border-left-color: var(--yellow); }
+.insight-card.success { border-left-color: var(--green); }
+.insight-card.traffic { border-left-color: var(--accent); }
+.insight-card.info { border-left-color: var(--text2); }
+
+.insight-card .insight-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+
+.insight-card .priority-badge {
+  font-size: 10px; padding: 1px 6px; border-radius: 4px;
+  font-weight: 600; text-transform: uppercase;
+}
+
+.priority-badge.high { background: rgba(239,68,68,0.2); color: var(--red); }
+.priority-badge.medium { background: rgba(234,179,8,0.2); color: var(--yellow); }
+
+.insight-card .insight-page { font-size: 12px; font-weight: 600; color: var(--accent2); }
+.insight-card .insight-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+
+.action-items {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px; margin-bottom: 32px;
+}
+
+.action-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.action-item:last-child { border-bottom: none; }
+
+.action-item .action-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0; font-weight: 700;
+}
+
+.action-icon.urgent { background: rgba(239,68,68,0.15); color: var(--red); }
+.action-icon.improve { background: rgba(234,179,8,0.15); color: var(--yellow); }
+.action-icon.monitor { background: rgba(99,102,241,0.15); color: var(--accent2); }
+
+.action-item .action-text { font-size: 13px; color: var(--text); }
+.action-item .action-text strong { color: var(--accent2); }
+
+.status-table-wrap {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; overflow-x: auto; margin-bottom: 32px;
+}
+
+.status-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+.status-table th {
+  background: var(--surface2); padding: 10px 14px; text-align: left;
+  font-weight: 500; color: var(--text2); border-bottom: 1px solid var(--border);
+}
+
+.status-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.status-table tr:last-child td { border-bottom: none; }
+.status-table tr:hover { background: var(--hover-row); }
+
+.status-badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+.status-badge.live { background: rgba(34,197,94,0.15); color: var(--green); }
+.status-badge.pending { background: rgba(234,179,8,0.15); color: var(--yellow); }
+.status-badge.none { background: rgba(136,136,160,0.1); color: var(--text2); }
+
+.comparison-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+.comparison-table th {
+  background: var(--surface2); padding: 10px 14px; text-align: right;
+  font-weight: 500; color: var(--text2); border-bottom: 1px solid var(--border);
+}
+
+.comparison-table th:first-child { text-align: left; }
+
+.comparison-table td {
+  padding: 10px 14px; text-align: right;
+  border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums;
+}
+
+.comparison-table td:first-child { text-align: left; font-weight: 500; }
+
+.tabs {
+  display: flex; gap: 4px; margin-bottom: 24px;
+  background: var(--surface); border-radius: 10px; padding: 4px;
+  width: fit-content; flex-wrap: wrap;
+}
+
+.tab {
+  padding: 8px 16px; border-radius: 8px; border: none;
+  background: transparent; color: var(--text2); font-size: 13px;
+  cursor: pointer; transition: all 0.15s;
+}
+
+.tab.active { background: var(--accent); color: white; }
+.tab:hover:not(.active) { color: var(--text); }
+
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 20px; font-size: 13px;
+  z-index: 200; opacity: 0; transform: translateY(10px); transition: all 0.3s;
+}
+
+.toast.show { opacity: 1; transform: translateY(0); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>LG</span> <span data-i18n="title">Buying Guides — GA Performance Dashboard</span></h1>
+  <div class="header-actions">
+    <span class="last-updated" id="lastUpdated"></span>
+
+    <!-- Language Toggle -->
+    <div class="toggle-group" id="langToggle">
+      <button data-val="ko">KO</button>
+      <button class="active" data-val="en">EN</button>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="toggle-group" id="themeToggle">
+      <button class="active" data-val="dark">Dark</button>
+      <button data-val="light">Light</button>
+    </div>
+
+    <button class="btn btn-primary" id="refreshBtn" onclick="refreshData()"><span data-i18n="refresh">Refresh Data</span></button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="tabs" id="mainTabs">
+    <button class="tab active" data-tab="overview" data-i18n="tab_overview">Overview</button>
+    <button class="tab" data-tab="acquisition" data-i18n="tab_acquisition">Acquisition</button>
+    <button class="tab" data-tab="behavior" data-i18n="tab_behavior">Behavior</button>
+    <button class="tab" data-tab="conversion" data-i18n="tab_conversion">Conversion</button>
+    <button class="tab" data-tab="insights" data-i18n="tab_insights">Insights & Actions</button>
+    <button class="tab" data-tab="status" data-i18n="tab_status">Page Status</button>
+  </div>
+
+  <div class="filters" id="filters"></div>
+
+  <div class="tab-content active" id="tab-overview">
+    <div class="kpi-grid" id="kpiGrid"></div>
+    <div class="charts-grid" id="overviewCharts"></div>
+    <div class="section-title"><span data-i18n="country_comparison">Country Performance Comparison (Latest Month)</span> <span class="badge" id="latestMonthBadge"></span></div>
+    <div class="status-table-wrap"><table class="comparison-table" id="comparisonTable"></table></div>
+  </div>
+
+  <div class="tab-content" id="tab-acquisition">
+    <div class="kpi-grid" id="acqKpis"></div>
+    <div class="charts-grid" id="acqCharts"></div>
+  </div>
+
+  <div class="tab-content" id="tab-behavior">
+    <div class="kpi-grid" id="behKpis"></div>
+    <div class="charts-grid" id="behCharts"></div>
+  </div>
+
+  <div class="tab-content" id="tab-conversion">
+    <div class="kpi-grid" id="convKpis"></div>
+    <div class="charts-grid" id="convCharts"></div>
+  </div>
+
+  <div class="tab-content" id="tab-insights">
+    <div class="section-title" data-i18n="data_insights">Data-Driven Insights</div>
+    <div class="insights-grid" id="insightsGrid"></div>
+    <div class="section-title" style="margin-top:32px" data-i18n="action_items_title">Action Items for the Team</div>
+    <div class="action-items" id="actionItems"></div>
+    <div class="section-title" style="margin-top:32px" data-i18n="analyst_notes">Per-Page Analyst Notes</div>
+    <div class="insights-grid" id="analystNotes"></div>
+  </div>
+
+  <div class="tab-content" id="tab-status">
+    <div class="section-title" data-i18n="page_status">Page Deployment Status</div>
+    <div class="status-table-wrap"><table class="status-table" id="statusTable"></table></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// i18n
+// ============================================================
+const I18N = {
+  en: {
+    title: 'Buying Guides — GA Performance Dashboard',
+    refresh: 'Refresh Data',
+    refreshing: 'Refreshing...',
+    tab_overview: 'Overview',
+    tab_acquisition: 'Acquisition',
+    tab_behavior: 'Behavior',
+    tab_conversion: 'Conversion',
+    tab_insights: 'Insights & Actions',
+    tab_status: 'Page Status',
+    country_comparison: 'Country Performance Comparison (Latest Month)',
+    data_insights: 'Data-Driven Insights',
+    action_items_title: 'Action Items for the Team',
+    analyst_notes: 'Per-Page Analyst Notes',
+    page_status: 'Page Deployment Status',
+    all_countries: 'All Countries',
+    all_categories: 'All Categories',
+    last_updated: 'Last updated',
+    click_refresh: 'Click Refresh to load latest data',
+    refresh_success: 'Data refreshed successfully!',
+    refresh_fail: 'Refresh failed',
+    load_fail: 'Failed to load data. Click Refresh.',
+    no_insights: 'No significant insights for current filter. Try "All Countries" and "All Categories".',
+    no_notes: 'No analyst notes available.',
+
+    // KPI labels
+    kpi_sessions: 'Total Sessions (Lineup)',
+    kpi_pageviews: 'Total Page Views (Lineup)',
+    kpi_engaged: 'Engaged Sessions',
+    kpi_clicks: 'Total Event Clicks',
+    kpi_plp_conv: 'Avg PLP Conversion',
+    kpi_pages_tracked: 'Pages Tracked',
+    kpi_organic: 'Organic Sessions',
+    kpi_external: 'External Entrance',
+    kpi_internal: 'Internal Sessions',
+    kpi_organic_share: 'Organic Share',
+    kpi_avg_duration: 'Avg Session Duration',
+    kpi_product_conv: 'Avg Product Conversion',
+    kpi_purchase_intent: 'Avg Purchase Intent',
+    kpi_purchase_conv: 'Avg Purchase Conversion',
+
+    // Chart titles
+    chart_sessions_country: 'Sessions by Country (Lineup)',
+    chart_pv_trend: 'Page Views Trend',
+    chart_engagement: 'Engagement Rate by Page',
+    chart_conversion: 'PLP Conversion by Page',
+    chart_traffic_source: 'Traffic Source Breakdown',
+    chart_session_trend: 'Session Trend by Country',
+    chart_exit_rate: 'Exit Rate by Page',
+    chart_int_ext: 'Internal vs External by Country',
+    chart_clicks_page: 'Event Clicks by Page',
+    chart_duration_page: 'Session Duration by Page',
+    chart_click_breakdown: 'Click Breakdown: GNB vs Anchor vs Features',
+    chart_clicks_session: 'Clicks per Session Trend',
+    chart_funnel: 'Conversion Funnel',
+    chart_plp_conv_page: 'PLP Conversion by Page',
+    chart_purch_conv_page: 'Purchase Conversion by Page',
+    chart_conv_trend: 'Conversion Trend',
+
+    // Table headers
+    th_page: 'Page', th_sessions: 'Sessions', th_pageviews: 'Page Views',
+    th_engagement: 'Engagement', th_event_clicks: 'Event Clicks',
+    th_plp_conv: 'PLP Conv.', th_purch_conv: 'Purchase Conv.',
+    th_mom_sessions: 'MoM Sessions',
+    th_country: 'Country', th_category: 'Category', th_type: 'Type',
+    th_live_status: 'Live Status', th_ga_tagged: 'GA Tagged',
+    th_breadcrumb: 'Breadcrumb', th_feedback: 'Feedback', th_link: 'Link',
+    link_open: 'Open',
+
+    // Chart labels
+    lbl_organic: 'Organic',
+    lbl_others: 'Others (Paid/Direct/etc)',
+    lbl_internal: 'Internal',
+    lbl_external: 'External',
+    lbl_gnb: 'GNB & Search',
+    lbl_anchor: 'Anchor Tab',
+    lbl_features: 'Features',
+    lbl_lineup_sess: 'Lineup Sessions',
+    lbl_plp: 'PLP',
+    lbl_pdp: 'PDP/PBP',
+    lbl_atc: 'Add to Cart',
+    lbl_purchase: 'Purchase',
+
+    // Action items
+    act_investigate: 'Investigate traffic drops:',
+    act_investigate_desc: 'Check if there were page changes, broken links, or SEO issues.',
+    act_engagement: 'Improve engagement:',
+    act_engagement_desc: 'have below 50% engagement rate. Consider adding interactive elements, improving above-fold content, or A/B testing layouts.',
+    act_exit: 'Reduce exit rate:',
+    act_exit_desc: 'have high exit rates. Strengthen CTAs to PLP/PDP, add compelling product links, or improve related content recommendations.',
+    act_purchase: 'Monitor purchase funnel:',
+    act_purchase_desc: 'have very low purchase conversion (<1%). Review the path from lineup guide to checkout for friction points.',
+    act_seo: 'SEO opportunity:',
+    act_seo_desc: 'have low organic share (<30%). Optimize meta tags, improve internal linking, and consider structured data for better search visibility.',
+    act_monitor: 'Continue monitoring:',
+    act_monitor_desc: 'month(s) of data, trends are still forming. Focus on building consistent month-over-month improvements. Ensure all new monthly data files are placed in the data directory and click Refresh.',
+  },
+  ko: {
+    title: '바잉 가이드 — GA 성과 대시보드',
+    refresh: '데이터 새로고침',
+    refreshing: '새로고침 중...',
+    tab_overview: '개요',
+    tab_acquisition: '유입 분석',
+    tab_behavior: '행동 분석',
+    tab_conversion: '전환 분석',
+    tab_insights: '인사이트 & 액션',
+    tab_status: '페이지 현황',
+    country_comparison: '국가별 성과 비교 (최신 월)',
+    data_insights: '데이터 기반 인사이트',
+    action_items_title: '팀 액션 아이템',
+    analyst_notes: '페이지별 분석 노트',
+    page_status: '페이지 배포 현황',
+    all_countries: '전체 국가',
+    all_categories: '전체 카테고리',
+    last_updated: '최종 업데이트',
+    click_refresh: '새로고침 버튼을 눌러 최신 데이터를 불러오세요',
+    refresh_success: '데이터가 성공적으로 새로고침 되었습니다!',
+    refresh_fail: '새로고침 실패',
+    load_fail: '데이터 로드에 실패했습니다. 새로고침을 눌러주세요.',
+    no_insights: '현재 필터에 해당하는 주요 인사이트가 없습니다. "전체 국가"와 "전체 카테고리"를 선택해보세요.',
+    no_notes: '분석 노트가 없습니다.',
+
+    kpi_sessions: '라인업 총 세션',
+    kpi_pageviews: '라인업 총 페이지뷰',
+    kpi_engaged: '참여 세션',
+    kpi_clicks: '총 이벤트 클릭',
+    kpi_plp_conv: '평균 PLP 전환율',
+    kpi_pages_tracked: '추적 페이지 수',
+    kpi_organic: '오가닉 세션',
+    kpi_external: '외부 유입',
+    kpi_internal: '내부 이동',
+    kpi_organic_share: '오가닉 비율',
+    kpi_avg_duration: '평균 체류시간',
+    kpi_product_conv: '평균 상품 전환율',
+    kpi_purchase_intent: '평균 구매의도 전환율',
+    kpi_purchase_conv: '평균 구매 전환율',
+
+    chart_sessions_country: '국가별 라인업 세션',
+    chart_pv_trend: '페이지뷰 추이',
+    chart_engagement: '페이지별 참여율',
+    chart_conversion: '페이지별 PLP 전환율',
+    chart_traffic_source: '트래픽 소스 분석',
+    chart_session_trend: '국가별 세션 추이',
+    chart_exit_rate: '페이지별 이탈률',
+    chart_int_ext: '국가별 내부/외부 유입',
+    chart_clicks_page: '페이지별 이벤트 클릭',
+    chart_duration_page: '페이지별 체류시간',
+    chart_click_breakdown: '클릭 분석: GNB vs 앵커탭 vs 피처',
+    chart_clicks_session: '세션당 클릭 추이',
+    chart_funnel: '전환 퍼널',
+    chart_plp_conv_page: '페이지별 PLP 전환율',
+    chart_purch_conv_page: '페이지별 구매 전환율',
+    chart_conv_trend: '전환율 추이',
+
+    th_page: '페이지', th_sessions: '세션', th_pageviews: '페이지뷰',
+    th_engagement: '참여율', th_event_clicks: '이벤트 클릭',
+    th_plp_conv: 'PLP 전환', th_purch_conv: '구매 전환',
+    th_mom_sessions: '전월 대비',
+    th_country: '국가', th_category: '카테고리', th_type: '유형',
+    th_live_status: '라이브 상태', th_ga_tagged: 'GA 태깅',
+    th_breadcrumb: '브레드크럼', th_feedback: '피드백', th_link: '링크',
+    link_open: '열기',
+
+    lbl_organic: '오가닉',
+    lbl_others: '기타 (유료/직접/등)',
+    lbl_internal: '내부',
+    lbl_external: '외부',
+    lbl_gnb: 'GNB & 검색',
+    lbl_anchor: '앵커 탭',
+    lbl_features: '피처',
+    lbl_lineup_sess: '라인업 세션',
+    lbl_plp: 'PLP',
+    lbl_pdp: 'PDP/PBP',
+    lbl_atc: '장바구니 담기',
+    lbl_purchase: '구매',
+
+    act_investigate: '트래픽 하락 조사 필요:',
+    act_investigate_desc: '페이지 변경, 링크 오류, SEO 이슈를 확인하세요.',
+    act_engagement: '참여율 개선 필요:',
+    act_engagement_desc: '참여율이 50% 미만입니다. 인터랙티브 요소 추가, 상단 콘텐츠 개선, A/B 테스트를 고려하세요.',
+    act_exit: '이탈률 개선 필요:',
+    act_exit_desc: '이탈률이 높습니다. PLP/PDP로의 CTA 강화, 상품 링크 추가, 관련 콘텐츠 추천을 개선하세요.',
+    act_purchase: '구매 퍼널 모니터링:',
+    act_purchase_desc: '구매 전환율이 매우 낮습니다 (<1%). 라인업 가이드에서 체크아웃까지의 경로에서 마찰 요소를 점검하세요.',
+    act_seo: 'SEO 개선 기회:',
+    act_seo_desc: '오가닉 유입 비율이 낮습니다 (<30%). 메타 태그 최적화, 내부 링킹 개선, 구조화 데이터 적용을 검토하세요.',
+    act_monitor: '지속 모니터링:',
+    act_monitor_desc: '개월 데이터로 추세가 형성 중입니다. 월별 꾸준한 개선에 집중하세요. 새 월별 데이터 파일을 폴더에 넣고 새로고침을 클릭하세요.',
+  }
+};
+
+let currentLang = localStorage.getItem('lg_dash_lang') || 'en';
+let currentTheme = localStorage.getItem('lg_dash_theme') || 'dark';
+
+function t(key) { return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.en[key]) || key; }
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('lg_dash_lang', lang);
+  document.documentElement.setAttribute('data-lang', lang);
+  applyI18n();
+  if (DATA) render();
+  // Update toggle active state
+  document.querySelectorAll('#langToggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === lang);
+  });
+}
+
+function setTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('lg_dash_theme', theme);
+  document.documentElement.setAttribute('data-theme', theme);
+  // Re-render charts for new colors
+  if (DATA) render();
+  document.querySelectorAll('#themeToggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === theme);
+  });
+}
+
+// ============================================================
+// State
+// ============================================================
+let DATA = null;
+let charts = {};
+let selectedCountry = 'ALL';
+let selectedCategory = 'ALL';
+
+const COLORS = {
+  UK: '#6366f1', FR: '#22c55e', PL: '#f97316', ES: '#eab308',
+  BR: '#06b6d4', 'CA-EN': '#ec4899', 'CA-FR': '#a855f7',
+  MX: '#14b8a6', NL: '#f43f5e', IT: '#84cc16', DE: '#8b5cf6'
+};
+
+const COUNTRY_NAMES_MAP = {
+  en: { UK: 'United Kingdom', FR: 'France', PL: 'Poland', ES: 'Spain', BR: 'Brazil', 'CA-EN': 'Canada (EN)', 'CA-FR': 'Canada (FR)', MX: 'Mexico', NL: 'Netherlands', IT: 'Italy', DE: 'Germany' },
+  ko: { UK: '영국', FR: '프랑스', PL: '폴란드', ES: '스페인', BR: '브라질', 'CA-EN': '캐나다(EN)', 'CA-FR': '캐나다(FR)', MX: '멕시코', NL: '네덜란드', IT: '이탈리아', DE: '독일' }
+};
+
+function countryName(code) {
+  return (COUNTRY_NAMES_MAP[currentLang] && COUNTRY_NAMES_MAP[currentLang][code]) || code;
+}
+
+// ============================================================
+// Init
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Restore saved prefs
+  setTheme(currentTheme);
+  setLang(currentLang);
+
+  // Toggle listeners
+  document.querySelectorAll('#langToggle button').forEach(btn => {
+    btn.addEventListener('click', () => setLang(btn.dataset.val));
+  });
+  document.querySelectorAll('#themeToggle button').forEach(btn => {
+    btn.addEventListener('click', () => setTheme(btn.dataset.val));
+  });
+
+  setupTabs();
+  loadData();
+});
+
+function setupTabs() {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+// ============================================================
+// Data Loading
+// ============================================================
+async function loadData() {
+  try {
+    // Try API first (local server), fallback to static file (GitHub Pages)
+    let resp;
+    try {
+      resp = await fetch('/api/data');
+      if (!resp.ok) throw new Error();
+    } catch {
+      resp = await fetch('./data.json');
+    }
+    DATA = await resp.json();
+    render();
+  } catch (e) {
+    showToast(t('load_fail'));
+  }
+}
+
+async function refreshData() {
+  const btn = document.getElementById('refreshBtn');
+  btn.disabled = true;
+  btn.querySelector('[data-i18n]').textContent = t('refreshing');
+  try {
+    // Try server-side refresh (local), fallback to static reload (deployed)
+    let resp;
+    try {
+      resp = await fetch('/api/refresh');
+      if (!resp.ok) throw new Error();
+      const result = await resp.json();
+      if (result.status === 'success') {
+        showToast(t('refresh_success'));
+        await loadData();
+        return;
+      } else {
+        showToast(t('refresh_fail') + ': ' + result.message);
+        return;
+      }
+    } catch {
+      // Static mode: just re-fetch data.json
+      await loadData();
+      showToast(t('refresh_success'));
+    }
+  } catch (e) {
+    showToast(t('refresh_fail') + ': ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.querySelector('[data-i18n]').textContent = t('refresh');
+  }
+}
+
+// ============================================================
+// Render
+// ============================================================
+function render() {
+  if (!DATA) return;
+
+  const updated = DATA.meta.last_updated;
+  document.getElementById('lastUpdated').textContent = updated
+    ? t('last_updated') + ': ' + new Date(updated).toLocaleString(currentLang === 'ko' ? 'ko-KR' : 'en-US')
+    : t('click_refresh');
+
+  applyI18n();
+  renderFilters();
+  renderOverview();
+  renderAcquisition();
+  renderBehavior();
+  renderConversion();
+  renderInsights();
+  renderStatus();
+}
+
+function renderFilters() {
+  const el = document.getElementById('filters');
+  let html = `<button class="btn btn-outline active" data-filter="country" data-val="ALL">${t('all_countries')}</button>`;
+  DATA.meta.countries.forEach(c => {
+    html += `<button class="btn btn-outline" data-filter="country" data-val="${c}">${countryName(c)}</button>`;
+  });
+  html += '<span style="width:8px"></span>';
+  html += `<button class="btn btn-outline active" data-filter="category" data-val="ALL">${t('all_categories')}</button>`;
+  DATA.meta.categories.forEach(c => {
+    html += `<button class="btn btn-outline" data-filter="category" data-val="${c}">${c}</button>`;
+  });
+  el.innerHTML = html;
+
+  el.querySelectorAll('.btn-outline').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filterType = btn.dataset.filter;
+      const val = btn.dataset.val;
+      el.querySelectorAll(`[data-filter="${filterType}"]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (filterType === 'country') selectedCountry = val;
+      else selectedCategory = val;
+      render();
+    });
+  });
+}
+
+function getFilteredSheets() {
+  return Object.entries(DATA.monthly_data).filter(([key, val]) => {
+    if (selectedCountry !== 'ALL' && val.country !== selectedCountry) return false;
+    if (selectedCategory !== 'ALL' && val.category !== selectedCategory) return false;
+    return true;
+  });
+}
+
+function getMonths() { return DATA.meta.months_available; }
+function getLatestMonth() { const m = getMonths(); return m[m.length - 1]; }
+function getPrevMonth() { const m = getMonths(); return m.length > 1 ? m[m.length - 2] : null; }
+
+function findMetric(metrics, ...keywords) {
+  for (const [key, val] of Object.entries(metrics)) {
+    const lk = key.toLowerCase();
+    if (keywords.every(kw => lk.includes(kw.toLowerCase()))) return val;
+  }
+  return null;
+}
+
+function getMetricValue(metrics, month, ...keywords) {
+  const m = findMetric(metrics, ...keywords);
+  if (!m || !m.monthly[month]) return null;
+  return m.monthly[month];
+}
+
+function formatNum(n, decimals = 0) {
+  if (n == null) return '—';
+  if (Math.abs(n) < 1 && n !== 0) return (n * 100).toFixed(1) + '%';
+  return n.toLocaleString(currentLang === 'ko' ? 'ko-KR' : 'en-US', { maximumFractionDigits: decimals });
+}
+
+function calcChange(curr, prev) {
+  if (!prev || prev === 0 || !curr) return null;
+  return ((curr - prev) / Math.abs(prev)) * 100;
+}
+
+function getChartColors() {
+  const style = getComputedStyle(document.documentElement);
+  return {
+    grid: style.getPropertyValue('--chart-grid').trim() || 'rgba(42,42,58,0.5)',
+    text: style.getPropertyValue('--chart-text').trim() || '#8888a0',
+  };
+}
+
+// ============================================================
+// Overview
+// ============================================================
+function renderOverview() {
+  const months = getMonths();
+  const latest = getLatestMonth();
+  const prev = getPrevMonth();
+  const sheets = getFilteredSheets();
+
+  document.getElementById('latestMonthBadge').textContent = latest + ' 2026';
+
+  let totalSessions=0, prevSessions=0, totalPageViews=0, prevPageViews=0;
+  let totalEngaged=0, prevEngaged=0, totalClicks=0, prevClicks=0;
+  let convRates=[], prevConvRates=[];
+
+  sheets.forEach(([key, data]) => {
+    const m = data.metrics_2026;
+    const sess = getMetricValue(m,latest,'lineup','session')||getMetricValue(m,latest,'tv_lineup','session')||getMetricValue(m,latest,'monitor_lineup','session')||0;
+    totalSessions+=sess;
+    if(prev) prevSessions+=getMetricValue(m,prev,'lineup','session')||getMetricValue(m,prev,'tv_lineup','session')||getMetricValue(m,prev,'monitor_lineup','session')||0;
+    const pv=getMetricValue(m,latest,'line_up')||getMetricValue(m,latest,'lineup')||0;
+    if(pv<10000){totalPageViews+=pv; if(prev) prevPageViews+=getMetricValue(m,prev,'line_up')||getMetricValue(m,prev,'lineup')||0;}
+    totalEngaged+=getMetricValue(m,latest,'engaged')||0;
+    if(prev) prevEngaged+=getMetricValue(m,prev,'engaged')||0;
+    totalClicks+=getMetricValue(m,latest,'event_click')||getMetricValue(m,latest,'guide_event_click')||0;
+    if(prev) prevClicks+=getMetricValue(m,prev,'event_click')||getMetricValue(m,prev,'guide_event_click')||0;
+    const conv=getMetricValue(m,latest,'plp_conversion'); if(conv!=null) convRates.push(conv);
+    if(prev){const pc=getMetricValue(m,prev,'plp_conversion'); if(pc!=null) prevConvRates.push(pc);}
+  });
+
+  const avgConv=convRates.length?convRates.reduce((a,b)=>a+b,0)/convRates.length:null;
+  const prevAvgConv=prevConvRates.length?prevConvRates.reduce((a,b)=>a+b,0)/prevConvRates.length:null;
+
+  document.getElementById('kpiGrid').innerHTML=[
+    kpiCard(t('kpi_sessions'),totalSessions,calcChange(totalSessions,prevSessions)),
+    kpiCard(t('kpi_pageviews'),totalPageViews,calcChange(totalPageViews,prevPageViews)),
+    kpiCard(t('kpi_engaged'),totalEngaged,calcChange(totalEngaged,prevEngaged)),
+    kpiCard(t('kpi_clicks'),totalClicks,calcChange(totalClicks,prevClicks)),
+    kpiCard(t('kpi_plp_conv'),avgConv,calcChange(avgConv,prevAvgConv)),
+    kpiCard(t('kpi_pages_tracked'),sheets.length,null),
+  ].join('');
+
+  const chartsEl=document.getElementById('overviewCharts');
+  chartsEl.innerHTML=`
+    <div class="chart-card"><h3>${t('chart_sessions_country')}</h3><canvas id="chartSessionsByCountry"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_pv_trend')}</h3><canvas id="chartPageViewsTrend"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_engagement')}</h3><canvas id="chartEngagementRate"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_conversion')}</h3><canvas id="chartConversion"></canvas></div>
+  `;
+
+  const countrySessionData={};
+  sheets.forEach(([key,data])=>{
+    const label=data.country;
+    const sess=getMetricValue(data.metrics_2026,latest,'lineup','session')||getMetricValue(data.metrics_2026,latest,'tv_lineup','session')||getMetricValue(data.metrics_2026,latest,'monitor_lineup','session')||0;
+    countrySessionData[label]=(countrySessionData[label]||0)+sess;
+  });
+  createChart('chartSessionsByCountry','bar',{
+    labels:Object.keys(countrySessionData).map(c=>countryName(c)),
+    datasets:[{data:Object.values(countrySessionData),backgroundColor:Object.keys(countrySessionData).map(c=>COLORS[c]||'#6366f1'),borderRadius:6}]
+  },{plugins:{legend:{display:false}}});
+
+  if(months.length>0){
+    const trendDatasets=[];
+    sheets.forEach(([key,data])=>{
+      const m=data.metrics_2026;
+      const pvMetric=findMetric(m,'line_up')||findMetric(m,'lineup');
+      if(!pvMetric) return;
+      const vals=months.map(mo=>pvMetric.monthly[mo]||null);
+      if(vals.every(v=>v===null||v>5000)) return;
+      trendDatasets.push({label:`${data.category} ${countryName(data.country)}`,data:vals,borderColor:COLORS[data.country]||'#6366f1',borderWidth:2,tension:0.3,pointRadius:4,fill:false});
+    });
+    createChart('chartPageViewsTrend','line',{labels:months,datasets:trendDatasets},{plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:10}}}}});
+  }
+
+  const engLabels=[],engData=[];
+  sheets.forEach(([key,data])=>{
+    const rate=getMetricValue(data.metrics_2026,latest,'engagem')||getMetricValue(data.metrics_2026,latest,'engagement');
+    if(rate!=null&&rate<=2){engLabels.push(`${data.category} ${countryName(data.country)}`);engData.push(rate);}
+  });
+  createChart('chartEngagementRate','bar',{
+    labels:engLabels,
+    datasets:[{data:engData.map(v=>v*100),backgroundColor:engData.map(v=>v>=0.7?'rgba(34,197,94,0.7)':v>=0.5?'rgba(234,179,8,0.7)':'rgba(239,68,68,0.7)'),borderRadius:6}]
+  },{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'%'}}}});
+
+  const convLabels=[],convData=[];
+  sheets.forEach(([key,data])=>{
+    const rate=getMetricValue(data.metrics_2026,latest,'plp_conversion');
+    if(rate!=null){convLabels.push(`${data.category} ${countryName(data.country)}`);convData.push(rate);}
+  });
+  createChart('chartConversion','bar',{
+    labels:convLabels,datasets:[{data:convData.map(v=>v*100),backgroundColor:'rgba(99,102,241,0.7)',borderRadius:6}]
+  },{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'%'}}}});
+
+  renderComparisonTable(sheets,latest,prev);
+}
+
+function renderComparisonTable(sheets,latest,prev){
+  const table=document.getElementById('comparisonTable');
+  let html=`<thead><tr><th>${t('th_page')}</th><th>${t('th_sessions')}</th><th>${t('th_pageviews')}</th><th>${t('th_engagement')}</th><th>${t('th_event_clicks')}</th><th>${t('th_plp_conv')}</th><th>${t('th_purch_conv')}</th><th>${t('th_mom_sessions')}</th></tr></thead><tbody>`;
+
+  sheets.forEach(([key,data])=>{
+    const m=data.metrics_2026;
+    const label=`${data.category} ${countryName(data.country)}`;
+    const sess=getMetricValue(m,latest,'lineup','session')||getMetricValue(m,latest,'tv_lineup','session')||getMetricValue(m,latest,'monitor_lineup','session')||0;
+    const prevSess=prev?(getMetricValue(m,prev,'lineup','session')||getMetricValue(m,prev,'tv_lineup','session')||getMetricValue(m,prev,'monitor_lineup','session')||0):0;
+    const pv=getMetricValue(m,latest,'line_up')||0;
+    const eng=getMetricValue(m,latest,'engagem');
+    const clicks=getMetricValue(m,latest,'event_click')||getMetricValue(m,latest,'guide_event_click')||0;
+    const plpConv=getMetricValue(m,latest,'plp_conversion');
+    const purchConv=getMetricValue(m,latest,'purchase_conversion');
+    const change=calcChange(sess,prevSess);
+    html+=`<tr><td><strong>${label}</strong></td><td>${formatNum(sess)}</td><td>${formatNum(pv)}</td><td>${eng!=null?formatNum(eng):'—'}</td><td>${formatNum(clicks)}</td><td>${plpConv!=null?formatNum(plpConv):'—'}</td><td>${purchConv!=null?formatNum(purchConv):'—'}</td><td class="${change>0?'kpi-change up':change<0?'kpi-change down':''}">${change!=null?(change>0?'+':'')+change.toFixed(1)+'%':'—'}</td></tr>`;
+  });
+  html+='</tbody>';
+  table.innerHTML=html;
+}
+
+// ============================================================
+// Acquisition
+// ============================================================
+function renderAcquisition(){
+  const months=getMonths(),latest=getLatestMonth(),prev=getPrevMonth(),sheets=getFilteredSheets();
+  let totalOrganic=0,prevOrganic=0,totalExternal=0,prevExternal=0,totalInternal=0,prevInternal=0;
+  sheets.forEach(([key,data])=>{
+    const m=data.metrics_2026;
+    totalOrganic+=getMetricValue(m,latest,'organic')||0;
+    totalExternal+=getMetricValue(m,latest,'external')||0;
+    totalInternal+=getMetricValue(m,latest,'internal')||0;
+    if(prev){prevOrganic+=getMetricValue(m,prev,'organic')||0;prevExternal+=getMetricValue(m,prev,'external')||0;prevInternal+=getMetricValue(m,prev,'internal')||0;}
+  });
+  document.getElementById('acqKpis').innerHTML=[
+    kpiCard(t('kpi_organic'),totalOrganic,calcChange(totalOrganic,prevOrganic)),
+    kpiCard(t('kpi_external'),totalExternal,calcChange(totalExternal,prevExternal)),
+    kpiCard(t('kpi_internal'),totalInternal,calcChange(totalInternal,prevInternal)),
+    kpiCard(t('kpi_organic_share'),totalExternal>0?totalOrganic/totalExternal:null,null),
+  ].join('');
+
+  const chartsEl=document.getElementById('acqCharts');
+  chartsEl.innerHTML=`
+    <div class="chart-card"><h3>${t('chart_traffic_source')} (${latest})</h3><canvas id="chartTrafficSource"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_session_trend')}</h3><canvas id="chartSessionTrend"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_exit_rate')}</h3><canvas id="chartExitRate"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_int_ext')}</h3><canvas id="chartIntExt"></canvas></div>
+  `;
+
+  createChart('chartTrafficSource','doughnut',{
+    labels:[t('lbl_organic'),t('lbl_others'),t('lbl_internal')],
+    datasets:[{data:[totalOrganic,totalExternal-totalOrganic,totalInternal],backgroundColor:['rgba(34,197,94,0.8)','rgba(99,102,241,0.8)','rgba(234,179,8,0.8)']}]
+  },{plugins:{legend:{position:'bottom'}}});
+
+  if(months.length>0){
+    const datasets=[];
+    sheets.forEach(([key,data])=>{
+      const sessMetric=findMetric(data.metrics_2026,'lineup','session')||findMetric(data.metrics_2026,'tv_lineup','session')||findMetric(data.metrics_2026,'monitor_lineup','session');
+      if(!sessMetric)return;
+      datasets.push({label:`${data.category} ${countryName(data.country)}`,data:months.map(mo=>sessMetric.monthly[mo]||null),borderColor:COLORS[data.country]||'#6366f1',borderWidth:2,tension:0.3,pointRadius:4});
+    });
+    createChart('chartSessionTrend','line',{labels:months,datasets},{plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:10}}}}});
+  }
+
+  const exitLabels=[],exitData=[];
+  sheets.forEach(([key,data])=>{
+    const rate=getMetricValue(data.metrics_2026,latest,'exit_rate')||getMetricValue(data.metrics_2026,latest,'line_up_guide','exit');
+    if(rate!=null&&rate<=2){exitLabels.push(`${data.category} ${countryName(data.country)}`);exitData.push(rate);}
+  });
+  createChart('chartExitRate','bar',{labels:exitLabels,datasets:[{data:exitData.map(v=>v*100),backgroundColor:exitData.map(v=>v<0.4?'rgba(34,197,94,0.7)':v<0.6?'rgba(234,179,8,0.7)':'rgba(239,68,68,0.7)'),borderRadius:6}]},{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'%'}}}});
+
+  const intExtLabels=[],intData=[],extData=[];
+  sheets.forEach(([key,data])=>{
+    const int_=getMetricValue(data.metrics_2026,latest,'internal')||0;
+    const ext_=getMetricValue(data.metrics_2026,latest,'external')||0;
+    if(int_>0||ext_>0){intExtLabels.push(`${data.category} ${countryName(data.country)}`);intData.push(int_);extData.push(ext_);}
+  });
+  createChart('chartIntExt','bar',{labels:intExtLabels,datasets:[
+    {label:t('lbl_internal'),data:intData,backgroundColor:'rgba(234,179,8,0.7)',borderRadius:6},
+    {label:t('lbl_external'),data:extData,backgroundColor:'rgba(99,102,241,0.7)',borderRadius:6}
+  ]},{plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true},y:{stacked:true}}});
+}
+
+// ============================================================
+// Behavior
+// ============================================================
+function renderBehavior(){
+  const months=getMonths(),latest=getLatestMonth(),prev=getPrevMonth(),sheets=getFilteredSheets();
+  let totalClicks=0,prevClicks=0,durations=[],prevDurations=[];
+  sheets.forEach(([key,data])=>{
+    const m=data.metrics_2026;
+    totalClicks+=getMetricValue(m,latest,'event_click')||getMetricValue(m,latest,'guide_event_click')||0;
+    if(prev) prevClicks+=getMetricValue(m,prev,'event_click')||getMetricValue(m,prev,'guide_event_click')||0;
+    const dur=getMetricValue(m,latest,'avg_session_duration')||getMetricValue(m,latest,'session_duration');
+    if(dur)durations.push(dur);
+    if(prev){const pd=getMetricValue(m,prev,'avg_session_duration')||getMetricValue(m,prev,'session_duration');if(pd)prevDurations.push(pd);}
+  });
+  const avgDur=durations.length?durations.reduce((a,b)=>a+b,0)/durations.length:0;
+  const prevAvgDur=prevDurations.length?prevDurations.reduce((a,b)=>a+b,0)/prevDurations.length:0;
+
+  document.getElementById('behKpis').innerHTML=[
+    kpiCard(t('kpi_clicks'),totalClicks,calcChange(totalClicks,prevClicks)),
+    kpiCard(t('kpi_avg_duration'),avgDur.toFixed(0)+'s',calcChange(avgDur,prevAvgDur)),
+    kpiCard(t('kpi_pages_tracked'),sheets.length,null),
+  ].join('');
+
+  const chartsEl=document.getElementById('behCharts');
+  chartsEl.innerHTML=`
+    <div class="chart-card"><h3>${t('chart_clicks_page')} (${latest})</h3><canvas id="chartClicksByPage"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_duration_page')} (${latest})</h3><canvas id="chartDurationByPage"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_click_breakdown')} (${latest})</h3><canvas id="chartClickBreakdown"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_clicks_session')}</h3><canvas id="chartClicksPerSession"></canvas></div>
+  `;
+
+  const cLabels=[],cData=[];
+  sheets.forEach(([key,data])=>{const v=getMetricValue(data.metrics_2026,latest,'event_click')||getMetricValue(data.metrics_2026,latest,'guide_event_click')||0;cLabels.push(`${data.category} ${countryName(data.country)}`);cData.push(v);});
+  createChart('chartClicksByPage','bar',{labels:cLabels,datasets:[{data:cData,backgroundColor:'rgba(99,102,241,0.7)',borderRadius:6}]},{plugins:{legend:{display:false}},indexAxis:'y'});
+
+  const dLabels=[],dData=[];
+  sheets.forEach(([key,data])=>{const v=getMetricValue(data.metrics_2026,latest,'avg_session_duration')||getMetricValue(data.metrics_2026,latest,'session_duration');if(v){dLabels.push(`${data.category} ${countryName(data.country)}`);dData.push(v);}});
+  createChart('chartDurationByPage','bar',{labels:dLabels,datasets:[{data:dData,backgroundColor:'rgba(34,197,94,0.7)',borderRadius:6}]},{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:currentLang==='ko'?'초':'seconds'}}}});
+
+  const bLabels=[],gnbData=[],anchorData=[],featData=[];
+  sheets.forEach(([key,data])=>{const m=data.metrics_2026;const gnb=getMetricValue(m,latest,'gnb')||0;const anchor=getMetricValue(m,latest,'anchor')||0;const feat=getMetricValue(m,latest,'features')||0;if(gnb+anchor+feat>0){bLabels.push(`${data.category} ${countryName(data.country)}`);gnbData.push(gnb);anchorData.push(anchor);featData.push(feat);}});
+  createChart('chartClickBreakdown','bar',{labels:bLabels,datasets:[
+    {label:t('lbl_gnb'),data:gnbData,backgroundColor:'rgba(99,102,241,0.7)',borderRadius:3},
+    {label:t('lbl_anchor'),data:anchorData,backgroundColor:'rgba(234,179,8,0.7)',borderRadius:3},
+    {label:t('lbl_features'),data:featData,backgroundColor:'rgba(34,197,94,0.7)',borderRadius:3}
+  ]},{plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true},y:{stacked:true}}});
+
+  if(months.length>0){
+    const datasets=[];
+    sheets.forEach(([key,data])=>{const cpsMetric=findMetric(data.metrics_2026,'click_per_session')||findMetric(data.metrics_2026,'total_click_per_session');if(!cpsMetric)return;datasets.push({label:`${data.category} ${countryName(data.country)}`,data:months.map(mo=>cpsMetric.monthly[mo]||null),borderColor:COLORS[data.country]||'#6366f1',borderWidth:2,tension:0.3,pointRadius:4});});
+    createChart('chartClicksPerSession','line',{labels:months,datasets},{plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:10}}}}});
+  }
+}
+
+// ============================================================
+// Conversion
+// ============================================================
+function renderConversion(){
+  const months=getMonths(),latest=getLatestMonth(),prev=getPrevMonth(),sheets=getFilteredSheets();
+  let plpConvs=[],prevPlp=[],prodConvs=[],prevProd=[],purchIntents=[],prevPurchInt=[],purchConvs=[],prevPurchConv=[];
+  sheets.forEach(([key,data])=>{
+    const m=data.metrics_2026;
+    const plp=getMetricValue(m,latest,'plp_conversion');if(plp!=null)plpConvs.push(plp);
+    const prod=getMetricValue(m,latest,'product_conversion');if(prod!=null)prodConvs.push(prod);
+    const pi=getMetricValue(m,latest,'purchase_intent');if(pi!=null)purchIntents.push(pi);
+    const pc=getMetricValue(m,latest,'purchase_conversion');if(pc!=null)purchConvs.push(pc);
+    if(prev){const pp=getMetricValue(m,prev,'plp_conversion');if(pp!=null)prevPlp.push(pp);const pprod=getMetricValue(m,prev,'product_conversion');if(pprod!=null)prevProd.push(pprod);const ppi=getMetricValue(m,prev,'purchase_intent');if(ppi!=null)prevPurchInt.push(ppi);const ppc=getMetricValue(m,prev,'purchase_conversion');if(ppc!=null)prevPurchConv.push(ppc);}
+  });
+  const avg=arr=>arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:null;
+
+  document.getElementById('convKpis').innerHTML=[
+    kpiCard(t('kpi_plp_conv'),avg(plpConvs),calcChange(avg(plpConvs),avg(prevPlp))),
+    kpiCard(t('kpi_product_conv'),avg(prodConvs),calcChange(avg(prodConvs),avg(prevProd))),
+    kpiCard(t('kpi_purchase_intent'),avg(purchIntents),calcChange(avg(purchIntents),avg(prevPurchInt))),
+    kpiCard(t('kpi_purchase_conv'),avg(purchConvs),calcChange(avg(purchConvs),avg(prevPurchConv))),
+  ].join('');
+
+  const chartsEl=document.getElementById('convCharts');
+  chartsEl.innerHTML=`
+    <div class="chart-card"><h3>${t('chart_funnel')} (${latest})</h3><canvas id="chartFunnel"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_plp_conv_page')}</h3><canvas id="chartPlpConvByPage"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_purch_conv_page')}</h3><canvas id="chartPurchConvByPage"></canvas></div>
+    <div class="chart-card"><h3>${t('chart_conv_trend')}</h3><canvas id="chartConvTrend"></canvas></div>
+  `;
+
+  let totalLineupSess=0,totalPlp=0,totalPdp=0,totalAtc=0,totalPurch=0;
+  sheets.forEach(([key,data])=>{const m=data.metrics_2026;totalLineupSess+=getMetricValue(m,latest,'line_up_guide','conversion')||getMetricValue(m,latest,'lineup','session')||0;totalPlp+=getMetricValue(m,latest,'plp')||0;totalPdp+=getMetricValue(m,latest,'pdp')||getMetricValue(m,latest,'pbp')||0;totalAtc+=getMetricValue(m,latest,'add_to_cart')||getMetricValue(m,latest,'checkout')||0;totalPurch+=getMetricValue(m,latest,'purchase')||0;});
+  createChart('chartFunnel','bar',{
+    labels:[t('lbl_lineup_sess'),t('lbl_plp'),t('lbl_pdp'),t('lbl_atc'),t('lbl_purchase')],
+    datasets:[{data:[totalLineupSess,totalPlp,totalPdp,totalAtc,totalPurch],backgroundColor:['rgba(99,102,241,0.8)','rgba(99,102,241,0.65)','rgba(99,102,241,0.5)','rgba(99,102,241,0.35)','rgba(34,197,94,0.8)'],borderRadius:6}]
+  },{plugins:{legend:{display:false}}});
+
+  const plpLabels=[],plpData=[];
+  sheets.forEach(([key,data])=>{const v=getMetricValue(data.metrics_2026,latest,'plp_conversion');if(v!=null){plpLabels.push(`${data.category} ${countryName(data.country)}`);plpData.push(v*100);}});
+  createChart('chartPlpConvByPage','bar',{labels:plpLabels,datasets:[{data:plpData,backgroundColor:'rgba(99,102,241,0.7)',borderRadius:6}]},{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'%'}}}});
+
+  const pcLabels=[],pcData=[];
+  sheets.forEach(([key,data])=>{const v=getMetricValue(data.metrics_2026,latest,'purchase_conversion');if(v!=null){pcLabels.push(`${data.category} ${countryName(data.country)}`);pcData.push(v*100);}});
+  createChart('chartPurchConvByPage','bar',{labels:pcLabels,datasets:[{data:pcData,backgroundColor:'rgba(34,197,94,0.7)',borderRadius:6}]},{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'%'}}}});
+
+  if(months.length>0){
+    const datasets=[];
+    sheets.forEach(([key,data])=>{const metric=findMetric(data.metrics_2026,'plp_conversion');if(!metric)return;datasets.push({label:`${data.category} ${countryName(data.country)}`,data:months.map(mo=>metric.monthly[mo]?metric.monthly[mo]*100:null),borderColor:COLORS[data.country]||'#6366f1',borderWidth:2,tension:0.3,pointRadius:4});});
+    createChart('chartConvTrend','line',{labels:months,datasets},{plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:10}}}},scales:{y:{title:{display:true,text:'%'}}}});
+  }
+}
+
+// ============================================================
+// Insights & Actions
+// ============================================================
+function renderInsights(){
+  const sheets=getFilteredSheets(),latest=getLatestMonth(),prev=getPrevMonth();
+
+  const filteredInsights=DATA.insights.filter(ins=>{
+    if(selectedCountry!=='ALL'&&!ins.page.includes(selectedCountry))return false;
+    if(selectedCategory!=='ALL'&&!ins.page.includes(selectedCategory))return false;
+    return true;
+  });
+
+  const insightsEl=document.getElementById('insightsGrid');
+  if(filteredInsights.length===0){
+    insightsEl.innerHTML=`<p style="color:var(--text2);">${t('no_insights')}</p>`;
+  } else {
+    insightsEl.innerHTML=filteredInsights.sort((a,b)=>{const p={high:0,medium:1};return(p[a.priority]||2)-(p[b.priority]||2);}).map(ins=>`
+      <div class="insight-card ${ins.type}">
+        <div class="insight-header"><span class="insight-page">${ins.page}</span><span class="priority-badge ${ins.priority}">${ins.priority}</span></div>
+        <div class="insight-text">${ins.message}</div>
+      </div>`).join('');
+  }
+
+  const actionEl=document.getElementById('actionItems');
+  const actions=generateActionItems(sheets,latest,prev);
+  actionEl.innerHTML=actions.map(a=>`
+    <div class="action-item">
+      <div class="action-icon ${a.urgency}">${a.icon}</div>
+      <div class="action-text">${a.text}</div>
+    </div>`).join('');
+
+  const notesEl=document.getElementById('analystNotes');
+  let notesHtml='';
+  sheets.forEach(([key,data])=>{
+    if(data.insights&&data.insights.length>0){
+      notesHtml+=`<div class="insight-card info"><div class="insight-header"><span class="insight-page">${data.category} ${countryName(data.country)}</span></div>${data.insights.map(tx=>`<div class="insight-text">${tx}</div>`).join('')}</div>`;
+    }
+  });
+  notesEl.innerHTML=notesHtml||`<p style="color:var(--text2);">${t('no_notes')}</p>`;
+}
+
+function generateActionItems(sheets,latest,prev){
+  const actions=[],months=getMonths();
+
+  const decliningPages=[];
+  sheets.forEach(([key,data])=>{const m=data.metrics_2026;if(!prev)return;const curr=getMetricValue(m,latest,'lineup','session')||getMetricValue(m,latest,'tv_lineup','session')||getMetricValue(m,latest,'monitor_lineup','session')||0;const prv=getMetricValue(m,prev,'lineup','session')||getMetricValue(m,prev,'tv_lineup','session')||getMetricValue(m,prev,'monitor_lineup','session')||0;if(prv>0&&curr<prv*0.8){decliningPages.push(`${data.category} ${countryName(data.country)} (${((curr-prv)/prv*100).toFixed(0)}%)`);}});
+  if(decliningPages.length>0) actions.push({urgency:'urgent',icon:'!!',text:`<strong>${t('act_investigate')}</strong> ${decliningPages.join(', ')}. ${t('act_investigate_desc')}`});
+
+  const lowEngPages=[];
+  sheets.forEach(([key,data])=>{const rate=getMetricValue(data.metrics_2026,latest,'engagem');if(rate!=null&&rate<0.5){lowEngPages.push(`${data.category} ${countryName(data.country)} (${(rate*100).toFixed(0)}%)`);}});
+  if(lowEngPages.length>0) actions.push({urgency:'improve',icon:'!',text:`<strong>${t('act_engagement')}</strong> ${lowEngPages.join(', ')} ${t('act_engagement_desc')}`});
+
+  const highExitPages=[];
+  sheets.forEach(([key,data])=>{const rate=getMetricValue(data.metrics_2026,latest,'exit_rate','line');if(rate!=null&&rate>0.5&&rate<=2){highExitPages.push(`${data.category} ${countryName(data.country)} (${(rate*100).toFixed(0)}%)`);}});
+  if(highExitPages.length>0) actions.push({urgency:'improve',icon:'!',text:`<strong>${t('act_exit')}</strong> ${highExitPages.join(', ')} ${t('act_exit_desc')}`});
+
+  const lowPurchPages=[];
+  sheets.forEach(([key,data])=>{const rate=getMetricValue(data.metrics_2026,latest,'purchase_conversion');if(rate!=null&&rate<0.01){lowPurchPages.push(`${data.category} ${countryName(data.country)}`);}});
+  if(lowPurchPages.length>0) actions.push({urgency:'monitor',icon:'i',text:`<strong>${t('act_purchase')}</strong> ${lowPurchPages.join(', ')} ${t('act_purchase_desc')}`});
+
+  const lowOrganicPages=[];
+  sheets.forEach(([key,data])=>{const org=getMetricValue(data.metrics_2026,latest,'organic')||0;const ext=getMetricValue(data.metrics_2026,latest,'external')||0;if(ext>0&&org/ext<0.3){lowOrganicPages.push(`${data.category} ${countryName(data.country)}`);}});
+  if(lowOrganicPages.length>0) actions.push({urgency:'improve',icon:'!',text:`<strong>${t('act_seo')}</strong> ${lowOrganicPages.join(', ')} ${t('act_seo_desc')}`});
+
+  actions.push({urgency:'monitor',icon:'i',text:`<strong>${t('act_monitor')}</strong> ${months.length} ${t('act_monitor_desc')}`});
+
+  return actions;
+}
+
+// ============================================================
+// Status
+// ============================================================
+function renderStatus(){
+  const table=document.getElementById('statusTable');
+  let html=`<thead><tr><th>${t('th_country')}</th><th>${t('th_category')}</th><th>${t('th_type')}</th><th>${t('th_live_status')}</th><th>${t('th_ga_tagged')}</th><th>${t('th_breadcrumb')}</th><th>${t('th_feedback')}</th><th>${t('th_link')}</th></tr></thead><tbody>`;
+  (DATA.pages||[]).forEach(page=>{
+    const statusClass=page.live_status==='LIVE'?'live':page.live_status?'pending':'none';
+    html+=`<tr><td>${page.country}</td><td>${page.category}</td><td>${page.type}</td><td><span class="status-badge ${statusClass}">${page.live_status||'—'}</span></td><td>${page.ga_tagged||'—'}</td><td>${page.breadcrumb||'—'}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${page.feedback}">${page.feedback||'—'}</td><td><a href="${page.link}" target="_blank" style="color:var(--accent2);text-decoration:none;">${t('link_open')}</a></td></tr>`;
+  });
+  html+='</tbody>';
+  table.innerHTML=html;
+}
+
+// ============================================================
+// Chart Helpers
+// ============================================================
+function createChart(canvasId,type,data,options={}){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas) return;
+  if(charts[canvasId]) charts[canvasId].destroy();
+
+  const cc=getChartColors();
+  const defaultOptions={
+    responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{labels:{color:cc.text,font:{size:11}}}},
+    scales:type==='doughnut'||type==='pie'?{}:{
+      x:{ticks:{color:cc.text,font:{size:10}},grid:{color:cc.grid}},
+      y:{ticks:{color:cc.text,font:{size:10}},grid:{color:cc.grid}}
+    }
+  };
+  charts[canvasId]=new Chart(canvas,{type,data,options:mergeDeep(defaultOptions,options)});
+}
+
+function mergeDeep(target,source){
+  const output={...target};
+  for(const key in source){
+    if(source[key]&&typeof source[key]==='object'&&!Array.isArray(source[key])){output[key]=mergeDeep(target[key]||{},source[key]);}
+    else{output[key]=source[key];}
+  }
+  return output;
+}
+
+function kpiCard(label,value,change){
+  const changeClass=change>0?'up':change<0?'down':'neutral';
+  const changeText=change!=null?`${change>0?'+':''}${change.toFixed(1)}% MoM`:'';
+  const displayValue=typeof value==='string'?value:formatNum(value);
+  return `<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value">${displayValue}</div>${changeText?`<div class="kpi-change ${changeClass}">${changeText}</div>`:''}</div>`;
+}
+
+function showToast(msg){
+  const toast=document.getElementById('toast');
+  toast.textContent=msg;toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>

@@ -390,6 +390,64 @@ body {
 .ranking-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); }
 .ranking-table td:first-child { font-weight: 600; color: var(--accent2); width: 30px; }
 .ranking-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Main page insight summary */
+.main-insight-hero {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px; margin-bottom: 20px;
+  border-left: 4px solid var(--accent);
+}
+.main-insight-hero h2 { font-size: 17px; margin-bottom: 14px; color: var(--accent2); }
+.main-insight-kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px; margin-bottom: 16px;
+}
+.main-insight-kpi { text-align: center; }
+.main-insight-kpi .mik-value { font-size: 22px; font-weight: 700; }
+.main-insight-kpi .mik-label { font-size: 11px; color: var(--text2); }
+
+.main-actions-wrap {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; margin-bottom: 20px;
+}
+.main-actions-wrap h3 { font-size: 15px; margin-bottom: 12px; color: var(--text); }
+.main-action-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px; border-radius: 8px; margin-bottom: 6px;
+  cursor: pointer; transition: background 0.15s;
+  font-size: 13px; line-height: 1.6;
+}
+.main-action-row:hover { background: var(--surface2); }
+.main-action-row .todo-icon { flex-shrink: 0; }
+.main-action-row .action-detail-link {
+  margin-left: auto; flex-shrink: 0; font-size: 11px;
+  color: var(--accent2); opacity: 0.6; transition: opacity 0.15s;
+  white-space: nowrap; padding-left: 8px;
+}
+.main-action-row:hover .action-detail-link { opacity: 1; }
+
+.view-all-link {
+  display: inline-block; margin-top: 8px; font-size: 12px;
+  color: var(--accent2); cursor: pointer; text-decoration: none;
+  padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border);
+  transition: all 0.15s;
+}
+.view-all-link:hover { border-color: var(--accent); background: rgba(99,102,241,0.1); }
+
+/* Country status mini cards on main page */
+.country-status-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px; margin-top: 12px;
+}
+.country-status-mini {
+  padding: 8px 12px; border-radius: 8px;
+  background: var(--surface2); cursor: pointer;
+  transition: all 0.15s; border: 1px solid transparent;
+  font-size: 12px;
+}
+.country-status-mini:hover { border-color: var(--accent); }
+.country-status-mini .csm-name { font-weight: 600; margin-bottom: 2px; }
+.country-status-mini .csm-stat { color: var(--text2); font-size: 11px; }
 </style>
 </head>
 <body>
@@ -428,6 +486,9 @@ body {
   <div class="filters" id="filters"></div>
 
   <div class="tab-content active" id="tab-overview">
+    <!-- Key Insights & Actions at top of main page -->
+    <div id="mainInsightsSummary"></div>
+    <div id="mainActionItems" style="margin-bottom:24px;"></div>
     <div class="kpi-grid" id="kpiGrid"></div>
     <div class="charts-grid" id="overviewCharts"></div>
     <div class="section-title"><span data-i18n="country_comparison">Country Performance Comparison (Latest Month)</span> <span class="badge" id="latestMonthBadge"></span></div>
@@ -580,6 +641,14 @@ const I18N = {
     ctype_lineup: 'Lineup Guide',
     ctype_feature_library: 'Feature Library',
 
+    // Main page insights
+    main_insight_title: 'Key Insights & Actions',
+    main_actions_title: 'Priority Actions',
+    main_country_status: 'Country Status',
+    view_details: 'View Details',
+    view_all_insights: 'View All Insights & Actions',
+    view_country_detail: 'View Detail',
+
     // Expert analysis
     stab_executive: 'Executive Summary',
     stab_countries: 'Country Reports',
@@ -724,6 +793,14 @@ const I18N = {
     all_content_types: '전체 콘텐츠',
     ctype_lineup: '라인업 가이드',
     ctype_feature_library: '피쳐 라이브러리',
+
+    // Main page insights
+    main_insight_title: '핵심 인사이트 & 액션',
+    main_actions_title: '우선 액션 항목',
+    main_country_status: '국가별 현황',
+    view_details: '상세 보기',
+    view_all_insights: '전체 인사이트 & 액션 보기',
+    view_country_detail: '상세 보기',
 
     // Expert analysis
     stab_executive: '종합 요약',
@@ -1036,6 +1113,117 @@ function getChartColors() {
 }
 
 // ============================================================
+// Main Page Insights (top of Overview)
+// ============================================================
+function navigateToInsight(subTab, countryCode) {
+  // Switch to Insights tab
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  const insightsTab = document.querySelector('.tab[data-tab="insights"]');
+  insightsTab.classList.add('active');
+  document.getElementById('tab-insights').classList.add('active');
+
+  // Switch to the sub-tab
+  document.querySelectorAll('#insightSubTabs .sub-tab').forEach(b => b.classList.remove('active'));
+  const targetBtn = document.querySelector(`#insightSubTabs .sub-tab[data-stab="${subTab}"]`);
+  if (targetBtn) targetBtn.classList.add('active');
+  ['executive','countries','categories','actions','direction'].forEach(p => {
+    document.getElementById('insightPanel-' + p).style.display = p === subTab ? 'block' : 'none';
+  });
+
+  // If country specified, filter to that country
+  if (countryCode) {
+    selectedCountry = countryCode;
+    renderFilters();
+    render();
+  }
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderMainInsights() {
+  const expert = DATA.expert || {};
+  const pct = expert.per_content_type || {};
+  const activeExpert = (selectedContentType !== 'ALL' && pct[selectedContentType]) ? pct[selectedContentType] : expert;
+  const ex = activeExpert.executive || {};
+  const reports = activeExpert.country_reports || {};
+
+  // ── Hero summary card ──
+  const momSign = (ex.session_change_pct || 0) >= 0 ? '+' : '';
+  const momClass = (ex.session_change_pct || 0) >= 0 ? 'up' : 'down';
+
+  // Content type comparison mini (when ALL)
+  let ctypeCompare = '';
+  if (selectedContentType === 'ALL' && Object.keys(pct).length > 1) {
+    ctypeCompare = '<div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;">';
+    for (const [ct, data] of Object.entries(pct)) {
+      const ce = data.executive || {};
+      ctypeCompare += `<div style="flex:1;min-width:200px;background:var(--surface2);border-radius:8px;padding:12px;cursor:pointer;" onclick="document.querySelectorAll('#filters [data-filter=ctype]').forEach(b=>{b.classList.remove('active');if(b.dataset.val==='${ct}')b.classList.add('active')});selectedContentType='${ct}';render();">
+        <div style="font-weight:600;font-size:13px;color:${ct === 'lineup' ? 'var(--accent2)' : 'var(--orange)'};">${t('ctype_' + ct)}</div>
+        <div style="display:flex;gap:16px;margin-top:6px;font-size:12px;color:var(--text2);">
+          <span>${t('exec_sessions')}: <strong style="color:var(--text);">${formatNum(ce.total_sessions || 0)}</strong></span>
+          <span>${t('exec_plp')}: <strong style="color:var(--text);">${((ce.avg_plp_conv || 0) * 100).toFixed(1)}%</strong></span>
+          <span>${t('exec_pages')}: <strong style="color:var(--text);">${ce.total_pages_tracked || 0}</strong></span>
+        </div>
+      </div>`;
+    }
+    ctypeCompare += '</div>';
+  }
+
+  const summaryEl = document.getElementById('mainInsightsSummary');
+  summaryEl.innerHTML = `
+    <div class="main-insight-hero">
+      <h2>${t('main_insight_title')} — ${ex.latest_month || ''} 2026</h2>
+      <div class="main-insight-kpis">
+        <div class="main-insight-kpi"><div class="mik-value">${formatNum(ex.total_sessions || 0)}</div><div class="mik-label">${t('exec_sessions')}</div></div>
+        <div class="main-insight-kpi"><div class="mik-value">${formatNum(ex.total_clicks || 0)}</div><div class="mik-label">${t('exec_clicks')}</div></div>
+        <div class="main-insight-kpi"><div class="mik-value">${((ex.avg_plp_conv || 0) * 100).toFixed(1)}%</div><div class="mik-label">${t('exec_plp')}</div></div>
+        <div class="main-insight-kpi"><div class="mik-value">${((ex.avg_purchase_conv || 0) * 100).toFixed(2)}%</div><div class="mik-label">${t('exec_purchase')}</div></div>
+        <div class="main-insight-kpi"><div class="mik-value kpi-change ${momClass}">${momSign}${(ex.session_change_pct || 0).toFixed(1)}%</div><div class="mik-label">${t('exec_mom')}</div></div>
+        <div class="main-insight-kpi"><div class="mik-value">${ex.total_pages_tracked || 0}</div><div class="mik-label">${t('exec_pages')}</div></div>
+      </div>
+      ${ctypeCompare}
+    </div>`;
+
+  // ── Action items + Country status ──
+  const sheets = getFilteredSheets(), latest = getLatestMonth(), prev = getPrevMonth();
+  const actions = generateActionItems(sheets, latest, prev);
+
+  let actionsHtml = `<div class="main-actions-wrap"><h3>${t('main_actions_title')}</h3>`;
+  actions.slice(0, 5).forEach(a => {
+    const iconCls = a.urgency === 'urgent' ? 'red' : a.urgency === 'improve' ? 'yellow' : 'blue';
+    const iconTxt = a.urgency === 'urgent' ? '!!' : a.urgency === 'improve' ? '!' : 'i';
+    actionsHtml += `<div class="main-action-row" onclick="navigateToInsight('actions')">
+      <div class="todo-icon ${iconCls}">${iconTxt}</div>
+      <div>${a.text}</div>
+      <span class="action-detail-link">${t('view_details')} →</span>
+    </div>`;
+  });
+
+  // Country status mini cards
+  const sortedCountries = Object.entries(reports).sort((a, b) => (b[1].total_sessions || 0) - (a[1].total_sessions || 0));
+  if (sortedCountries.length > 0) {
+    actionsHtml += `<h3 style="margin-top:16px;">${t('main_country_status')}</h3>`;
+    actionsHtml += `<div class="country-status-grid">`;
+    sortedCountries.forEach(([code, r]) => {
+      const statusColor = r.status === 'growing' ? 'var(--green)' : r.status === 'declining' ? 'var(--red)' : 'var(--accent2)';
+      const statusLabel = t(r.status) || r.status;
+      const momS = (r.session_change_pct || 0) >= 0 ? '+' : '';
+      actionsHtml += `<div class="country-status-mini" onclick="navigateToInsight('countries','${code}')">
+        <div class="csm-name">${countryName(code)}</div>
+        <div class="csm-stat"><span style="color:${statusColor};font-weight:600;">${statusLabel}</span> · ${formatNum(r.total_sessions || 0)} sess · ${momS}${(r.session_change_pct || 0).toFixed(0)}%</div>
+      </div>`;
+    });
+    actionsHtml += `</div>`;
+  }
+
+  actionsHtml += `<div style="text-align:right;margin-top:12px;"><span class="view-all-link" onclick="navigateToInsight('executive')">${t('view_all_insights')} →</span></div></div>`;
+
+  document.getElementById('mainActionItems').innerHTML = actionsHtml;
+}
+
+// ============================================================
 // Overview
 // ============================================================
 function renderOverview() {
@@ -1044,6 +1232,7 @@ function renderOverview() {
   const prev = getPrevMonth();
   const sheets = getFilteredSheets();
 
+  renderMainInsights();
   document.getElementById('latestMonthBadge').textContent = latest + ' 2026';
 
   let totalSessions=0, prevSessions=0, totalPageViews=0, prevPageViews=0;

@@ -28302,283 +28302,251 @@
   "insights": [
     {
       "type": "success",
-      "page": "Monitor UK (Feature Library)",
-      "metric": "PLP Conversion",
+      "page": "Global Strategy",
+      "metric": "Conversion Efficiency",
+      "content_type": "all",
+      "priority": "high",
+      "message": "ES leads in conversion efficiency (48.3% avg PLP conv, 435 sessions). Study this market's content structure and user journey as a template for underperformers."
+    },
+    {
+      "type": "warning",
+      "page": "TV UK (Feature Library)",
+      "metric": "SEO",
       "content_type": "feature_library",
-      "message": "Monitor UK (Feature Library): PLP Conv improved 109.0% (Jan: 8.1% → Feb: 16.9%)",
-      "priority": "high"
+      "priority": "medium",
+      "message": "TV UK (Feature Library): Organic makes up only 15% of external traffic. Heavy reliance on paid/direct — SEO investment needed for sustainable growth."
+    },
+    {
+      "type": "warning",
+      "page": "Monitor UK (Feature Library)",
+      "metric": "SEO",
+      "content_type": "feature_library",
+      "priority": "medium",
+      "message": "Monitor UK (Feature Library): Organic makes up only 13% of external traffic. Heavy reliance on paid/direct — SEO investment needed for sustainable growth."
     },
     {
       "type": "warning",
       "page": "TV FR (Feature Library)",
       "metric": "PLP Conversion",
       "content_type": "feature_library",
-      "message": "TV FR (Feature Library): PLP Conv declined 33.7% (Jan: 47.6% → Feb: 31.6%)",
-      "priority": "high"
+      "priority": "high",
+      "message": "TV FR (Feature Library): PLP conversion fell from 47.6% to 31.6% (-34%). CTA effectiveness declining — review product link placement and above-fold messaging."
     },
     {
       "type": "warning",
       "page": "Monitor FR (Feature Library)",
       "metric": "PLP Conversion",
       "content_type": "feature_library",
-      "message": "Monitor FR (Feature Library): PLP Conv declined 75.0% (Jan: 66.7% → Feb: 16.7%)",
-      "priority": "high"
-    },
-    {
-      "type": "success",
-      "page": "TV PL (Feature Library)",
-      "metric": "PLP Conversion",
-      "content_type": "feature_library",
-      "message": "TV PL (Feature Library): PLP Conv improved 200.0% (Jan: 14.3% → Feb: 42.9%)",
-      "priority": "high"
+      "priority": "high",
+      "message": "Monitor FR (Feature Library): PLP conversion fell from 66.7% to 16.7% (-75%). CTA effectiveness declining — review product link placement and above-fold messaging."
     },
     {
       "type": "warning",
       "page": "Monitor PL (Feature Library)",
       "metric": "Sessions",
       "content_type": "feature_library",
-      "message": "Monitor PL (Feature Library): Sessions decreased 50% (Jan: 16 → Feb: 8)",
-      "priority": "medium"
-    },
-    {
-      "type": "success",
-      "page": "Monitor PL (Feature Library)",
-      "metric": "PLP Conversion",
-      "content_type": "feature_library",
-      "message": "Monitor PL (Feature Library): PLP Conv improved 175.0% (Jan: 9.1% → Feb: 25.0%)",
-      "priority": "high"
+      "priority": "high",
+      "message": "Monitor PL (Feature Library): Sessions dropped 50% (16→8). Driven by: internal traffic down -25%, organic down -50%. Investigate internal link exposure, seasonal pattern, or page discoverability."
     },
     {
       "type": "success",
       "page": "TV ES (Feature Library)",
-      "metric": "PLP Conversion",
+      "metric": "Engagement",
       "content_type": "feature_library",
-      "message": "TV ES (Feature Library): PLP Conv improved 37.1% (Jan: 27.8% → Feb: 38.1%)",
-      "priority": "high"
+      "priority": "low",
+      "message": "TV ES (Feature Library): Excellent interaction rate (8.2 clicks/session). Users actively exploring features and products."
+    },
+    {
+      "type": "info",
+      "page": "TV ES (Feature Library)",
+      "metric": "Funnel",
+      "content_type": "feature_library",
+      "priority": "medium",
+      "message": "TV ES (Feature Library): Good PLP conversion (38.1%) but purchase conversion is near zero (0.00%). Content drives product discovery but not purchase intent — consider adding pricing context, promotions, or urgency cues."
     },
     {
       "type": "warning",
       "page": "Monitor ES (Feature Library)",
       "metric": "Sessions",
       "content_type": "feature_library",
-      "message": "Monitor ES (Feature Library): Sessions decreased 42% (Jan: 19 → Feb: 11)",
-      "priority": "medium"
+      "priority": "high",
+      "message": "Monitor ES (Feature Library): Sessions dropped 42% (19→11). Driven by: internal traffic down -44%. Investigate internal link exposure, seasonal pattern, or page discoverability."
     },
     {
       "type": "warning",
       "page": "Monitor ES (Feature Library)",
       "metric": "PLP Conversion",
       "content_type": "feature_library",
-      "message": "Monitor ES (Feature Library): PLP Conv declined 31.8% (Jan: 66.7% → Feb: 45.5%)",
-      "priority": "high"
+      "priority": "high",
+      "message": "Monitor ES (Feature Library): PLP conversion fell from 66.7% to 45.5% (-32%). CTA effectiveness declining — review product link placement and above-fold messaging."
     },
     {
       "type": "warning",
       "page": "TV BR (Feature Library)",
       "metric": "PLP Conversion",
       "content_type": "feature_library",
-      "message": "TV BR (Feature Library): PLP Conv declined 49.2% (Jan: 57.1% → Feb: 29.0%)",
-      "priority": "high"
+      "priority": "high",
+      "message": "TV BR (Feature Library): PLP conversion fell from 57.1% to 29.0% (-49%). CTA effectiveness declining — review product link placement and above-fold messaging."
     },
     {
-      "type": "traffic",
+      "type": "success",
+      "page": "TV BR (Feature Library)",
+      "metric": "Engagement",
+      "content_type": "feature_library",
+      "priority": "low",
+      "message": "TV BR (Feature Library): Excellent interaction rate (5.8 clicks/session). Users actively exploring features and products."
+    },
+    {
+      "type": "warning",
+      "page": "TV BR (Feature Library)",
+      "metric": "SEO",
+      "content_type": "feature_library",
+      "priority": "medium",
+      "message": "TV BR (Feature Library): Organic makes up only 0% of external traffic. Heavy reliance on paid/direct — SEO investment needed for sustainable growth."
+    },
+    {
+      "type": "success",
       "page": "TV CA_EN (Feature Library)",
       "metric": "Sessions",
       "content_type": "feature_library",
-      "message": "TV CA_EN (Feature Library): Sessions increased 200% (Jan: 4 → Feb: 12)",
-      "priority": "high"
+      "priority": "medium",
+      "message": "TV CA_EN (Feature Library): Sessions grew 200% (4→12). Positive momentum — review what's working and amplify."
     },
     {
       "type": "warning",
       "page": "Monitor CA_EN (Feature Library)",
       "metric": "PLP Conversion",
       "content_type": "feature_library",
-      "message": "Monitor CA_EN (Feature Library): PLP Conv declined 27.3% (Jan: 75.0% → Feb: 54.5%)",
-      "priority": "medium"
+      "priority": "high",
+      "message": "Monitor CA_EN (Feature Library): PLP conversion fell from 75.0% to 54.5% (-27%). CTA effectiveness declining — review product link placement and above-fold messaging."
     },
     {
       "type": "warning",
       "page": "TV CA_FR (Feature Library)",
       "metric": "Sessions",
       "content_type": "feature_library",
-      "message": "TV CA_FR (Feature Library): Sessions decreased 50% (Jan: 4 → Feb: 2)",
-      "priority": "medium"
+      "priority": "high",
+      "message": "TV CA_FR (Feature Library): Sessions dropped 50% (4→2). Driven by: internal traffic down -100%. Investigate internal link exposure, seasonal pattern, or page discoverability."
     },
     {
       "type": "warning",
       "page": "TV MX (Feature Library)",
       "metric": "PLP Conversion",
       "content_type": "feature_library",
-      "message": "TV MX (Feature Library): PLP Conv declined 25.0% (Jan: 36.4% → Feb: 27.3%)",
-      "priority": "medium"
+      "priority": "high",
+      "message": "TV MX (Feature Library): PLP conversion fell from 36.4% to 27.3% (-25%). CTA effectiveness declining — review product link placement and above-fold messaging."
     },
     {
       "type": "warning",
       "page": "Monitor MX (Feature Library)",
       "metric": "Sessions",
       "content_type": "feature_library",
-      "message": "Monitor MX (Feature Library): Sessions decreased 41% (Jan: 17 → Feb: 10)",
-      "priority": "medium"
+      "priority": "high",
+      "message": "Monitor MX (Feature Library): Sessions dropped 41% (17→10). Driven by: internal traffic down -40%. Investigate internal link exposure, seasonal pattern, or page discoverability."
     },
     {
       "type": "success",
-      "page": "TV NL (Feature Library)",
-      "metric": "PLP Conversion",
-      "content_type": "feature_library",
-      "message": "TV NL (Feature Library): PLP Conv improved 76.5% (Jan: 16.7% → Feb: 29.4%)",
-      "priority": "high"
-    },
-    {
-      "type": "traffic",
       "page": "Monitor NL (Feature Library)",
       "metric": "Sessions",
       "content_type": "feature_library",
-      "message": "Monitor NL (Feature Library): Sessions increased 500% (Jan: 3 → Feb: 18)",
-      "priority": "high"
+      "priority": "medium",
+      "message": "Monitor NL (Feature Library): Sessions grew 500% (3→18). Positive momentum — review what's working and amplify."
     },
     {
       "type": "warning",
       "page": "Monitor NL (Feature Library)",
       "metric": "PLP Conversion",
       "content_type": "feature_library",
-      "message": "Monitor NL (Feature Library): PLP Conv declined 82.4% (Jan: 33.3% → Feb: 5.9%)",
-      "priority": "high"
-    },
-    {
-      "type": "success",
-      "page": "TV IT (Feature Library)",
-      "metric": "PLP Conversion",
-      "content_type": "feature_library",
-      "message": "TV IT (Feature Library): PLP Conv improved 75.0% (Jan: 33.3% → Feb: 58.3%)",
-      "priority": "high"
+      "priority": "high",
+      "message": "Monitor NL (Feature Library): PLP conversion fell from 33.3% to 5.9% (-82%). CTA effectiveness declining — review product link placement and above-fold messaging."
     },
     {
       "type": "warning",
       "page": "TV UK (Lineup Guide)",
       "metric": "Sessions",
       "content_type": "lineup",
-      "message": "TV UK (Lineup Guide): Sessions decreased 75% (Jan: 412 → Feb: 101)",
-      "priority": "high"
+      "priority": "high",
+      "message": "TV UK (Lineup Guide): Sessions dropped 75% (412→101). Driven by: internal traffic down -111%, organic down -22%. Investigate internal link exposure, seasonal pattern, or page discoverability."
+    },
+    {
+      "type": "success",
+      "page": "TV UK (Lineup Guide)",
+      "metric": "Engagement",
+      "content_type": "lineup",
+      "priority": "low",
+      "message": "TV UK (Lineup Guide): Excellent interaction rate (12.4 clicks/session). Users actively exploring features and products."
     },
     {
       "type": "warning",
       "page": "TV FR (Lineup Guide)",
       "metric": "Sessions",
       "content_type": "lineup",
-      "message": "TV FR (Lineup Guide): Sessions decreased 51% (Jan: 214 → Feb: 104)",
-      "priority": "high"
-    },
-    {
-      "type": "warning",
-      "page": "TV FR (Lineup Guide)",
-      "metric": "PLP Conversion",
-      "content_type": "lineup",
-      "message": "TV FR (Lineup Guide): PLP Conv declined 16.7% (Jan: 45.6% → Feb: 38.0%)",
-      "priority": "medium"
+      "priority": "high",
+      "message": "TV FR (Lineup Guide): Sessions dropped 51% (214→104). Driven by: internal traffic down -51%, organic down -47%. Investigate internal link exposure, seasonal pattern, or page discoverability."
     },
     {
       "type": "warning",
       "page": "TV PL (Lineup Guide)",
       "metric": "Sessions",
       "content_type": "lineup",
-      "message": "TV PL (Lineup Guide): Sessions decreased 49% (Jan: 67 → Feb: 34)",
-      "priority": "medium"
+      "priority": "high",
+      "message": "TV PL (Lineup Guide): Sessions dropped 49% (67→34). Driven by: internal traffic down -36%, organic down -53%. Investigate internal link exposure, seasonal pattern, or page discoverability."
     },
     {
       "type": "success",
       "page": "TV PL (Lineup Guide)",
       "metric": "PLP Conversion",
       "content_type": "lineup",
-      "message": "TV PL (Lineup Guide): PLP Conv improved 30.8% (Jan: 44.8% → Feb: 58.6%)",
-      "priority": "high"
+      "priority": "medium",
+      "message": "TV PL (Lineup Guide): Strong PLP conversion at 58.6% with 34 sessions. High-performing content — benchmark for other markets."
     },
     {
-      "type": "success",
-      "page": "Monitor PL (Lineup Guide)",
-      "metric": "PLP Conversion",
+      "type": "info",
+      "page": "TV PL (Lineup Guide)",
+      "metric": "Funnel",
       "content_type": "lineup",
-      "message": "Monitor PL (Lineup Guide): PLP Conv improved 140.0% (Jan: 16.7% → Feb: 40.0%)",
-      "priority": "high"
+      "priority": "medium",
+      "message": "TV PL (Lineup Guide): Good PLP conversion (58.6%) but purchase conversion is near zero (0.00%). Content drives product discovery but not purchase intent — consider adding pricing context, promotions, or urgency cues."
     },
     {
       "type": "warning",
       "page": "Monitor BR (Lineup Guide)",
       "metric": "PLP Conversion",
       "content_type": "lineup",
-      "message": "Monitor BR (Lineup Guide): PLP Conv declined 44.2% (Jan: 44.8% → Feb: 25.0%)",
-      "priority": "high"
-    },
-    {
-      "type": "warning",
-      "page": "TV CA-EN (Lineup Guide)",
-      "metric": "Sessions",
-      "content_type": "lineup",
-      "message": "TV CA-EN (Lineup Guide): Sessions decreased 28% (Jan: 107 → Feb: 77)",
-      "priority": "medium"
-    },
-    {
-      "type": "warning",
-      "page": "TV CA-EN (Lineup Guide)",
-      "metric": "PLP Conversion",
-      "content_type": "lineup",
-      "message": "TV CA-EN (Lineup Guide): PLP Conv declined 15.7% (Jan: 41.9% → Feb: 35.3%)",
-      "priority": "medium"
-    },
-    {
-      "type": "warning",
-      "page": "Monitor CA-EN (Lineup Guide)",
-      "metric": "PLP Conversion",
-      "content_type": "lineup",
-      "message": "Monitor CA-EN (Lineup Guide): PLP Conv declined 18.2% (Jan: 66.7% → Feb: 54.5%)",
-      "priority": "medium"
+      "priority": "high",
+      "message": "Monitor BR (Lineup Guide): PLP conversion fell from 44.8% to 25.0% (-44%). CTA effectiveness declining — review product link placement and above-fold messaging."
     },
     {
       "type": "warning",
       "page": "TV CA-FR (Lineup Guide)",
       "metric": "Sessions",
       "content_type": "lineup",
-      "message": "TV CA-FR (Lineup Guide): Sessions decreased 65% (Jan: 40 → Feb: 14)",
-      "priority": "high"
-    },
-    {
-      "type": "warning",
-      "page": "TV CA-FR (Lineup Guide)",
-      "metric": "PLP Conversion",
-      "content_type": "lineup",
-      "message": "TV CA-FR (Lineup Guide): PLP Conv declined 67.7% (Jan: 28.1% → Feb: 9.1%)",
-      "priority": "high"
-    },
-    {
-      "type": "success",
-      "page": "Monitor CA-FR (Lineup Guide)",
-      "metric": "PLP Conversion",
-      "content_type": "lineup",
-      "message": "Monitor CA-FR (Lineup Guide): PLP Conv improved 150.0% (Jan: 20.0% → Feb: 50.0%)",
-      "priority": "high"
+      "priority": "high",
+      "message": "TV CA-FR (Lineup Guide): Sessions dropped 65% (40→14). Driven by: internal traffic down -79%. Investigate internal link exposure, seasonal pattern, or page discoverability."
     },
     {
       "type": "warning",
       "page": "TV MX (Lineup Guide)",
       "metric": "Sessions",
       "content_type": "lineup",
-      "message": "TV MX (Lineup Guide): Sessions decreased 30% (Jan: 82 → Feb: 57)",
-      "priority": "medium"
+      "priority": "high",
+      "message": "TV MX (Lineup Guide): Sessions dropped 30% (82→57). Driven by: internal traffic down -32%, organic down -48%. Investigate internal link exposure, seasonal pattern, or page discoverability."
     },
     {
       "type": "success",
-      "page": "TV NL (Lineup Guide)",
+      "page": "TV IT (Lineup Guide)",
       "metric": "PLP Conversion",
       "content_type": "lineup",
-      "message": "TV NL (Lineup Guide): PLP Conv improved 40.1% (Jan: 32.0% → Feb: 44.8%)",
-      "priority": "high"
+      "priority": "medium",
+      "message": "TV IT (Lineup Guide): Strong PLP conversion at 64.9% with 103 sessions. High-performing content — benchmark for other markets."
     },
     {
-      "type": "success",
-      "page": "Monitor NL (Lineup Guide)",
-      "metric": "PLP Conversion",
-      "content_type": "lineup",
-      "message": "Monitor NL (Lineup Guide): PLP Conv improved 225.0% (Jan: 15.4% → Feb: 50.0%)",
-      "priority": "high"
+      "type": "info",
+      "page": "Cross-Content",
+      "metric": "Content Strategy",
+      "content_type": "all",
+      "priority": "medium",
+      "message": "Avg dwell time: Lineup 128s vs Feature Library 123s. Lineup Guide holds attention longer — this is the primary content discovery touchpoint."
     }
   ],
   "expert": {
@@ -33467,5 +33435,55 @@
         "exit_rate": null
       }
     }
+  },
+  "narrative": {
+    "content_actions": [
+      {
+        "title": "Lineup Guide vs Feature Library: Role Clarity",
+        "title_ko": "라인업 가이드 vs 피쳐 라이브러리: 역할 정의",
+        "body": "Lineup Guides drive 1080 sessions (43.3% PLP conv) vs Feature Library's 437 sessions (34.2% PLP conv). Lineup is the primary purchase-path content; Feature Library serves as a spec-reference tool. Action: Strengthen cross-linking between them — add 'Compare detailed specs' CTAs in Lineup pages, and 'Find your ideal model' CTAs in Feature Library.",
+        "body_ko": "라인업 가이드: 1080 세션 (PLP 전환 43.3%), 피쳐 라이브러리: 437 세션 (PLP 전환 34.2%). 라인업은 구매 경로의 핵심 콘텐츠이고, 피쳐 라이브러리는 스펙 참조 도구 역할. 액션: 라인업 페이지에 '상세 스펙 비교하기' CTA를, 피쳐 라이브러리에 '나에게 맞는 모델 찾기' CTA를 추가하여 상호 연결 강화.",
+        "priority": "high"
+      },
+      {
+        "title": "Three-Tier Market Approach",
+        "title_ko": "3단계 시장 전략",
+        "body": "Tier 1 (Scale): ES, UK, BR, FR, IT — Focus on conversion optimization, A/B testing, SEO authority building. Tier 2 (Grow): MX, CA-EN, NL, PL — Increase internal linking exposure, localize content depth, improve discoverability. Tier 3 (Seed): CA_EN, CA-FR, CA_FR — Foundational SEO, ensure basic content quality, monitor for traction signals before heavy investment.",
+        "body_ko": "Tier 1 (확대): ES, UK, BR, FR, IT — 전환율 최적화, A/B 테스트, SEO 권위 구축 집중. Tier 2 (성장): MX, CA-EN, NL, PL — 내부 링킹 노출 확대, 콘텐츠 현지화 심화, 발견성 개선. Tier 3 (씨앗): CA_EN, CA-FR, CA_FR — 기본 SEO 작업, 콘텐츠 품질 보장, 의미있는 트래픽 신호 감지 후 투자 확대.",
+        "priority": "high"
+      },
+      {
+        "title": "SEO/Organic Growth Strategy",
+        "title_ko": "SEO/오가닉 성장 전략",
+        "body": "Pages with low organic share (<30%): TV UK (feature_library), Monitor UK (feature_library), TV BR (feature_library), TV MX (feature_library), TV UK (lineup). These pages rely heavily on internal/paid traffic. Actions: (1) Optimize H1/meta titles with buying-intent keywords (e.g., 'best LG TV 2026', 'LG OLED vs QNED comparison'), (2) Add structured data (FAQ, Product schema), (3) Build internal linking from high-traffic category pages.",
+        "body_ko": "오가닉 비율 낮은 페이지 (<30%): TV UK (feature_library), Monitor UK (feature_library), TV BR (feature_library), TV MX (feature_library), TV UK (lineup). 내부/유료 트래픽에 과도하게 의존. 액션: (1) 구매 의도 키워드로 H1/메타 타이틀 최적화 (예: 'best LG TV 2026', 'LG OLED vs QNED 비교'), (2) 구조화 데이터 추가 (FAQ, Product 스키마), (3) 고트래픽 카테고리 페이지에서 내부 링킹 강화.",
+        "priority": "high"
+      },
+      {
+        "title": "Engagement Gap: Reading Without Acting",
+        "title_ko": "참여 격차: 읽기는 하지만 행동하지 않음",
+        "body": "These pages have high dwell time but low interaction: TV MX (feature_library, 1.9 clicks/sess, 131s). Users consume content but don't click through. Actions: (1) Add in-content product cards with direct PLP links, (2) Insert comparison tables with 'See price' buttons, (3) Use sticky footer CTA bar, (4) Add anchor navigation for faster spec browsing.",
+        "body_ko": "높은 체류시간 대비 낮은 상호작용: TV MX (feature_library, 1.9 clicks/sess, 131s). 사용자가 콘텐츠를 소비하지만 클릭하지 않음. 액션: (1) PLP 직접 링크가 있는 인콘텐츠 제품 카드 추가, (2) '가격 보기' 버튼이 있는 비교 테이블 삽입, (3) 스티키 하단 CTA 바 사용, (4) 빠른 스펙 탐색을 위한 앵커 네비게이션 추가.",
+        "priority": "medium"
+      },
+      {
+        "title": "Purchase Funnel Leakage",
+        "title_ko": "구매 퍼널 누수",
+        "body": "Good product discovery but near-zero purchase: TV ES (feature_library, PLP 38%), TV PL (lineup, PLP 59%). The content successfully drives users to product pages, but they drop off before purchase. This may be a PDP/checkout issue rather than a content issue. Actions: (1) Coordinate with e-commerce team on PDP conversion, (2) Add promo/bundle offers within buying guide content, (3) Test 'Add to Cart' CTAs directly in lineup comparisons.",
+        "body_ko": "제품 발견은 잘되지만 구매는 거의 없음: TV ES (feature_library, PLP 38%), TV PL (lineup, PLP 59%). 콘텐츠가 상품 페이지로의 이동은 성공적이나 구매 전 이탈. 콘텐츠보다 PDP/체크아웃 문제일 수 있음. 액션: (1) 이커머스팀과 PDP 전환율 개선 협의, (2) 바잉가이드 내 프로모/번들 오퍼 추가, (3) 라인업 비교 내 '장바구니 담기' CTA 직접 테스트.",
+        "priority": "medium"
+      },
+      {
+        "title": "TV vs Monitor: Category-Specific Strategy",
+        "title_ko": "TV vs Monitor: 카테고리별 전략",
+        "body": "TV: 1361 sessions, 40.0% avg PLP conv. Monitor: 156 sessions, 38.1% avg PLP conv. TV drives significantly more traffic and should remain the priority content investment. Monitor content needs stronger internal link placement from product category pages to grow its audience.",
+        "body_ko": "TV: 1361 세션, PLP 전환 40.0%. Monitor: 156 세션, PLP 전환 38.1%. TV가 훨씬 더 많은 트래픽을 유도하며 우선 콘텐츠 투자가 필요. Monitor 콘텐츠는 카테고리 페이지에서의 내부 링크 배치 강화로 오디언스 확대 필요.",
+        "priority": "medium"
+      }
+    ],
+    "latest_month": "Feb",
+    "prev_month": "Jan",
+    "total_sessions": 1517.0,
+    "total_pages": 42
   }
 }

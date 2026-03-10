@@ -342,45 +342,319 @@ def _get_session_val(metrics, month):
             or _get_val(metrics, month, 'monitor_spec', 'session'))
 
 
+def _safe_pct(cur, prev):
+    if prev and prev > 0 and cur is not None:
+        return ((cur - prev) / prev) * 100
+    return None
+
+
 def compute_insights(all_data, months):
-    """Generate simple metric-level insights."""
+    """Generate expert-level strategic insights from all data points."""
     insights = []
     if len(months) < 2:
         return insights
 
     latest, prev = months[-1], months[-2]
+
+    # ── Collect sheet-level summaries ──
+    summaries = []
     for sheet_key, data in all_data.items():
-        metrics = data['metrics_2026']
-        ctype_label = 'Feature Library' if data.get('content_type') == 'feature_library' else 'Lineup Guide'
+        m = data['metrics_2026']
+        ct = data.get('content_type', 'lineup')
+        ctype_label = 'Feature Library' if ct == 'feature_library' else 'Lineup Guide'
         label = f"{data['category']} {data['country']} ({ctype_label})"
+        cat, country = data['category'], data['country']
 
-        sess_cur = _get_session_val(metrics, latest)
-        sess_prev = _get_session_val(metrics, prev)
-        if sess_cur and sess_prev and sess_prev > 0:
-            ch = ((sess_cur - sess_prev) / sess_prev) * 100
-            if abs(ch) > 20:
-                insights.append({
-                    'type': 'traffic' if ch > 0 else 'warning', 'page': label, 'metric': 'Sessions',
-                    'content_type': data.get('content_type', 'lineup'),
-                    'message': f"{label}: Sessions {'increased' if ch>0 else 'decreased'} {abs(ch):.0f}% ({prev}: {sess_prev:.0f} → {latest}: {sess_cur:.0f})",
-                    'priority': 'high' if abs(ch)>50 else 'medium'
-                })
+        s = {
+            'key': sheet_key, 'label': label, 'cat': cat, 'country': country, 'ct': ct,
+            'sess': _get_session_val(m, latest),
+            'sess_prev': _get_session_val(m, prev),
+            'organic': _get_val(m, latest, 'organic'),
+            'organic_prev': _get_val(m, prev, 'organic'),
+            'internal': _get_val(m, latest, 'internal'),
+            'internal_prev': _get_val(m, prev, 'internal'),
+            'external': _get_val(m, latest, 'external'),
+            'external_prev': _get_val(m, prev, 'external'),
+            'clicks': _get_val(m, latest, 'event_click') or _get_val(m, latest, 'guide_event_click') or _get_val(m, latest, 'library_event_click'),
+            'clicks_prev': _get_val(m, prev, 'event_click') or _get_val(m, prev, 'guide_event_click') or _get_val(m, prev, 'library_event_click'),
+            'duration': _get_val(m, latest, 'avg_session_duration') or _get_val(m, latest, 'session_duration'),
+            'duration_prev': _get_val(m, prev, 'avg_session_duration') or _get_val(m, prev, 'session_duration'),
+            'plp': _get_val(m, latest, 'plp_conversion'),
+            'plp_prev': _get_val(m, prev, 'plp_conversion'),
+            'purchase_conv': _get_val(m, latest, 'purchase_conversion'),
+            'purchase_conv_prev': _get_val(m, prev, 'purchase_conversion'),
+            'engagement': _get_val(m, latest, 'engagem'),
+            'engagement_prev': _get_val(m, prev, 'engagem'),
+            'exit_rate': _get_val(m, latest, 'exit_rate'),
+        }
+        summaries.append(s)
 
-        for ck in metrics:
-            if 'plp_conversion' in ck:
-                m = metrics[ck]
-                cv, pv = m['monthly'].get(latest), m['monthly'].get(prev)
-                if cv and pv and pv > 0 and cv <= 1:
-                    ch = ((cv - pv) / pv) * 100
-                    if abs(ch) > 15:
-                        insights.append({
-                            'type': 'success' if ch>0 else 'warning', 'page': label, 'metric': 'PLP Conversion',
-                            'content_type': data.get('content_type', 'lineup'),
-                            'message': f"{label}: PLP Conv {'improved' if ch>0 else 'declined'} {abs(ch):.1f}% ({prev}: {pv:.1%} → {latest}: {cv:.1%})",
-                            'priority': 'high' if abs(ch)>30 else 'medium'
-                        })
-                break
+    # ── Per-sheet metric insights ──
+    for s in summaries:
+        label = s['label']
+        ct = s['ct']
+
+        # Session changes
+        sess_ch = _safe_pct(s['sess'], s['sess_prev'])
+        if sess_ch is not None and abs(sess_ch) > 15:
+            if sess_ch < -30:
+                # Diagnose WHY
+                int_ch = _safe_pct(s['internal'], s['internal_prev'])
+                org_ch = _safe_pct(s['organic'], s['organic_prev'])
+                cause = []
+                if int_ch is not None and int_ch < -20:
+                    cause.append(f"internal traffic down {int_ch:.0f}%")
+                if org_ch is not None and org_ch < -20:
+                    cause.append(f"organic down {org_ch:.0f}%")
+                cause_str = f" Driven by: {', '.join(cause)}." if cause else ""
+                insights.append({'type': 'warning', 'page': label, 'metric': 'Sessions', 'content_type': ct, 'priority': 'high',
+                    'message': f"{label}: Sessions dropped {abs(sess_ch):.0f}% ({s['sess_prev']:.0f}→{s['sess']:.0f}).{cause_str} Investigate internal link exposure, seasonal pattern, or page discoverability."})
+            elif sess_ch > 20:
+                insights.append({'type': 'success', 'page': label, 'metric': 'Sessions', 'content_type': ct, 'priority': 'medium',
+                    'message': f"{label}: Sessions grew {sess_ch:.0f}% ({s['sess_prev']:.0f}→{s['sess']:.0f}). Positive momentum — review what's working and amplify."})
+
+        # PLP Conversion
+        plp_ch = _safe_pct(s['plp'], s['plp_prev'])
+        if plp_ch is not None and s['plp'] is not None and s['plp'] <= 1:
+            if plp_ch < -20 and s['plp_prev'] and s['plp_prev'] > 0.3:
+                insights.append({'type': 'warning', 'page': label, 'metric': 'PLP Conversion', 'content_type': ct, 'priority': 'high',
+                    'message': f"{label}: PLP conversion fell from {s['plp_prev']:.1%} to {s['plp']:.1%} ({plp_ch:.0f}%). CTA effectiveness declining — review product link placement and above-fold messaging."})
+            elif s['plp'] and s['plp'] > 0.5 and (s['sess'] or 0) > 20:
+                insights.append({'type': 'success', 'page': label, 'metric': 'PLP Conversion', 'content_type': ct, 'priority': 'medium',
+                    'message': f"{label}: Strong PLP conversion at {s['plp']:.1%} with {s['sess']:.0f} sessions. High-performing content — benchmark for other markets."})
+
+        # Content engagement quality
+        if s['clicks'] and s['sess'] and s['sess'] > 10:
+            clicks_per_sess = s['clicks'] / s['sess']
+            if clicks_per_sess < 1.5 and s['duration'] and s['duration'] > 120:
+                insights.append({'type': 'info', 'page': label, 'metric': 'Engagement', 'content_type': ct, 'priority': 'medium',
+                    'message': f"{label}: High dwell time ({s['duration']:.0f}s) but low click rate ({clicks_per_sess:.1f}/session). Users are reading but not interacting — content may lack clear CTAs or interactive elements."})
+            elif clicks_per_sess > 5:
+                insights.append({'type': 'success', 'page': label, 'metric': 'Engagement', 'content_type': ct, 'priority': 'low',
+                    'message': f"{label}: Excellent interaction rate ({clicks_per_sess:.1f} clicks/session). Users actively exploring features and products."})
+
+        # Organic dependency / opportunity
+        if s['external'] and s['external'] > 0 and s['organic'] is not None:
+            org_share = s['organic'] / s['external'] if s['external'] > 0 else 0
+            if org_share < 0.2 and (s['sess'] or 0) > 20:
+                insights.append({'type': 'warning', 'page': label, 'metric': 'SEO', 'content_type': ct, 'priority': 'medium',
+                    'message': f"{label}: Organic makes up only {org_share:.0%} of external traffic. Heavy reliance on paid/direct — SEO investment needed for sustainable growth."})
+
+        # Purchase funnel
+        if s['plp'] and s['purchase_conv'] is not None and s['sess'] and s['sess'] > 20:
+            if s['plp'] > 0.3 and s['purchase_conv'] < 0.005:
+                insights.append({'type': 'info', 'page': label, 'metric': 'Funnel', 'content_type': ct, 'priority': 'medium',
+                    'message': f"{label}: Good PLP conversion ({s['plp']:.1%}) but purchase conversion is near zero ({s['purchase_conv']:.2%}). Content drives product discovery but not purchase intent — consider adding pricing context, promotions, or urgency cues."})
+
+    # ── Cross-cutting strategic insights ──
+    # Lineup vs Feature Library comparison
+    lineup_sheets = [s for s in summaries if s['ct'] == 'lineup']
+    fl_sheets = [s for s in summaries if s['ct'] == 'feature_library']
+
+    if lineup_sheets and fl_sheets:
+        lu_avg_plp = [s['plp'] for s in lineup_sheets if s['plp'] and s['plp'] <= 1]
+        fl_avg_plp = [s['plp'] for s in fl_sheets if s['plp'] and s['plp'] <= 1]
+        if lu_avg_plp and fl_avg_plp:
+            lu_mean = sum(lu_avg_plp) / len(lu_avg_plp)
+            fl_mean = sum(fl_avg_plp) / len(fl_avg_plp)
+            if lu_mean > fl_mean * 1.3:
+                insights.append({'type': 'info', 'page': 'Cross-Content', 'metric': 'Content Strategy', 'content_type': 'all', 'priority': 'high',
+                    'message': f"Lineup Guides convert {lu_mean:.1%} to PLP vs Feature Library's {fl_mean:.1%}. Lineup content is {((lu_mean/fl_mean - 1)*100):.0f}% more effective at driving product page visits. Feature Library needs stronger product CTAs or inline product links to close this gap."})
+
+        lu_avg_dur = [s['duration'] for s in lineup_sheets if s['duration'] and s['duration'] > 0]
+        fl_avg_dur = [s['duration'] for s in fl_sheets if s['duration'] and s['duration'] > 0]
+        if lu_avg_dur and fl_avg_dur:
+            lu_dur = sum(lu_avg_dur) / len(lu_avg_dur)
+            fl_dur = sum(fl_avg_dur) / len(fl_avg_dur)
+            insights.append({'type': 'info', 'page': 'Cross-Content', 'metric': 'Content Strategy', 'content_type': 'all', 'priority': 'medium',
+                'message': f"Avg dwell time: Lineup {lu_dur:.0f}s vs Feature Library {fl_dur:.0f}s. {'Feature Library commands more attention per visit — leverage this engagement depth with richer product integration.' if fl_dur > lu_dur else 'Lineup Guide holds attention longer — this is the primary content discovery touchpoint.'}"})
+
+    # Top market patterns
+    top_markets = {}  # country -> aggregated
+    for s in summaries:
+        c = s['country']
+        if c not in top_markets:
+            top_markets[c] = {'total_sess': 0, 'total_sess_prev': 0, 'plps': [], 'purchases': 0, 'ctypes': set()}
+        top_markets[c]['total_sess'] += s['sess'] or 0
+        top_markets[c]['total_sess_prev'] += s['sess_prev'] or 0
+        if s['plp'] and s['plp'] <= 1:
+            top_markets[c]['plps'].append(s['plp'])
+        if s['purchase_conv']:
+            top_markets[c]['purchases'] += 1
+        top_markets[c]['ctypes'].add(s['ct'])
+
+    # Market concentration risk
+    total_all = sum(v['total_sess'] for v in top_markets.values())
+    if total_all > 0:
+        sorted_markets = sorted(top_markets.items(), key=lambda x: x[1]['total_sess'], reverse=True)
+        top_share = sorted_markets[0][1]['total_sess'] / total_all if total_all > 0 else 0
+        if top_share > 0.3:
+            insights.insert(0, {'type': 'info', 'page': 'Global Strategy', 'metric': 'Market Strategy', 'content_type': 'all', 'priority': 'high',
+                'message': f"{sorted_markets[0][0]} accounts for {top_share:.0%} of all sessions. Over-concentration risk — invest in growing underperforming markets ({', '.join(c for c,v in sorted_markets[-3:] if v['total_sess'] > 0)}) to diversify traffic sources."})
+
+    # Markets with best conversion efficiency
+    efficient = [(c, sum(v['plps'])/len(v['plps']), v['total_sess'])
+                 for c, v in top_markets.items() if len(v['plps']) >= 2 and v['total_sess'] > 30]
+    efficient.sort(key=lambda x: x[1], reverse=True)
+    if efficient:
+        best = efficient[0]
+        insights.insert(0, {'type': 'success', 'page': 'Global Strategy', 'metric': 'Conversion Efficiency', 'content_type': 'all', 'priority': 'high',
+            'message': f"{best[0]} leads in conversion efficiency ({best[1]:.1%} avg PLP conv, {best[2]:.0f} sessions). Study this market's content structure and user journey as a template for underperformers."})
+
     return insights
+
+
+def compute_strategic_narrative(all_data, months, pages):
+    """Generate high-level strategic narratives for the content team."""
+    if len(months) < 2:
+        return {}
+
+    latest, prev = months[-1], months[-2]
+    narratives = {}
+
+    # Collect all summaries
+    summaries = []
+    for sheet_key, data in all_data.items():
+        m = data['metrics_2026']
+        ct = data.get('content_type', 'lineup')
+        s = {
+            'ct': ct, 'cat': data['category'], 'country': data['country'],
+            'sess': _get_session_val(m, latest),
+            'sess_prev': _get_session_val(m, prev),
+            'plp': _get_val(m, latest, 'plp_conversion'),
+            'clicks': _get_val(m, latest, 'event_click') or _get_val(m, latest, 'guide_event_click') or _get_val(m, latest, 'library_event_click'),
+            'duration': _get_val(m, latest, 'avg_session_duration') or _get_val(m, latest, 'session_duration'),
+            'organic': _get_val(m, latest, 'organic'),
+            'external': _get_val(m, latest, 'external'),
+            'internal': _get_val(m, latest, 'internal'),
+            'purchase_conv': _get_val(m, latest, 'purchase_conversion'),
+            'engagement': _get_val(m, latest, 'engagem'),
+        }
+        summaries.append(s)
+
+    lu = [s for s in summaries if s['ct'] == 'lineup']
+    fl = [s for s in summaries if s['ct'] == 'feature_library']
+
+    # ── Content Team Direction ──
+    content_actions = []
+
+    # 1. Lineup vs Feature Library strategy
+    lu_total = sum(s['sess'] or 0 for s in lu)
+    fl_total = sum(s['sess'] or 0 for s in fl)
+    lu_plp = [s['plp'] for s in lu if s['plp'] and s['plp'] <= 1]
+    fl_plp = [s['plp'] for s in fl if s['plp'] and s['plp'] <= 1]
+    lu_avg_plp = sum(lu_plp)/len(lu_plp) if lu_plp else 0
+    fl_avg_plp = sum(fl_plp)/len(fl_plp) if fl_plp else 0
+
+    content_actions.append({
+        'title': 'Lineup Guide vs Feature Library: Role Clarity',
+        'title_ko': '라인업 가이드 vs 피쳐 라이브러리: 역할 정의',
+        'body': f"Lineup Guides drive {lu_total:.0f} sessions ({lu_avg_plp:.1%} PLP conv) vs Feature Library's {fl_total:.0f} sessions ({fl_avg_plp:.1%} PLP conv). Lineup is the primary purchase-path content; Feature Library serves as a spec-reference tool. Action: Strengthen cross-linking between them — add 'Compare detailed specs' CTAs in Lineup pages, and 'Find your ideal model' CTAs in Feature Library.",
+        'body_ko': f"라인업 가이드: {lu_total:.0f} 세션 (PLP 전환 {lu_avg_plp:.1%}), 피쳐 라이브러리: {fl_total:.0f} 세션 (PLP 전환 {fl_avg_plp:.1%}). 라인업은 구매 경로의 핵심 콘텐츠이고, 피쳐 라이브러리는 스펙 참조 도구 역할. 액션: 라인업 페이지에 '상세 스펙 비교하기' CTA를, 피쳐 라이브러리에 '나에게 맞는 모델 찾기' CTA를 추가하여 상호 연결 강화.",
+        'priority': 'high',
+    })
+
+    # 2. Market-tier strategy
+    by_country = {}
+    for s in summaries:
+        c = s['country']
+        if c not in by_country:
+            by_country[c] = {'sess': 0, 'plps': [], 'has_purchase': False}
+        by_country[c]['sess'] += s['sess'] or 0
+        if s['plp'] and s['plp'] <= 1:
+            by_country[c]['plps'].append(s['plp'])
+        if s['purchase_conv'] and s['purchase_conv'] > 0.005:
+            by_country[c]['has_purchase'] = True
+
+    tier1 = [(c, d) for c, d in by_country.items() if d['sess'] > 100]
+    tier2 = [(c, d) for c, d in by_country.items() if 30 < d['sess'] <= 100]
+    tier3 = [(c, d) for c, d in by_country.items() if d['sess'] <= 30 and d['sess'] > 0]
+
+    t1_names = ', '.join(c for c,_ in sorted(tier1, key=lambda x: x[1]['sess'], reverse=True))
+    t2_names = ', '.join(c for c,_ in sorted(tier2, key=lambda x: x[1]['sess'], reverse=True))
+    t3_names = ', '.join(c for c,_ in sorted(tier3, key=lambda x: x[1]['sess'], reverse=True))
+
+    content_actions.append({
+        'title': 'Three-Tier Market Approach',
+        'title_ko': '3단계 시장 전략',
+        'body': f"Tier 1 (Scale): {t1_names or 'None'} — Focus on conversion optimization, A/B testing, SEO authority building. Tier 2 (Grow): {t2_names or 'None'} — Increase internal linking exposure, localize content depth, improve discoverability. Tier 3 (Seed): {t3_names or 'None'} — Foundational SEO, ensure basic content quality, monitor for traction signals before heavy investment.",
+        'body_ko': f"Tier 1 (확대): {t1_names or '없음'} — 전환율 최적화, A/B 테스트, SEO 권위 구축 집중. Tier 2 (성장): {t2_names or '없음'} — 내부 링킹 노출 확대, 콘텐츠 현지화 심화, 발견성 개선. Tier 3 (씨앗): {t3_names or '없음'} — 기본 SEO 작업, 콘텐츠 품질 보장, 의미있는 트래픽 신호 감지 후 투자 확대.",
+        'priority': 'high',
+    })
+
+    # 3. Organic growth opportunity
+    low_organic = []
+    for s in summaries:
+        if s['external'] and s['external'] > 5 and s['organic'] is not None:
+            org_share = s['organic'] / s['external'] if s['external'] > 0 else 0
+            if org_share < 0.3:
+                low_organic.append(f"{s['cat']} {s['country']} ({s['ct']})")
+
+    if low_organic:
+        content_actions.append({
+            'title': 'SEO/Organic Growth Strategy',
+            'title_ko': 'SEO/오가닉 성장 전략',
+            'body': f"Pages with low organic share (<30%): {', '.join(low_organic[:5])}. These pages rely heavily on internal/paid traffic. Actions: (1) Optimize H1/meta titles with buying-intent keywords (e.g., 'best LG TV 2026', 'LG OLED vs QNED comparison'), (2) Add structured data (FAQ, Product schema), (3) Build internal linking from high-traffic category pages.",
+            'body_ko': f"오가닉 비율 낮은 페이지 (<30%): {', '.join(low_organic[:5])}. 내부/유료 트래픽에 과도하게 의존. 액션: (1) 구매 의도 키워드로 H1/메타 타이틀 최적화 (예: 'best LG TV 2026', 'LG OLED vs QNED 비교'), (2) 구조화 데이터 추가 (FAQ, Product 스키마), (3) 고트래픽 카테고리 페이지에서 내부 링킹 강화.",
+            'priority': 'high',
+        })
+
+    # 4. Content engagement optimization
+    low_click_high_dur = []
+    for s in summaries:
+        if s['sess'] and s['sess'] > 15 and s['clicks'] and s['duration']:
+            cps = s['clicks'] / s['sess']
+            if cps < 2.0 and s['duration'] > 100:
+                low_click_high_dur.append(f"{s['cat']} {s['country']} ({s['ct']}, {cps:.1f} clicks/sess, {s['duration']:.0f}s)")
+
+    if low_click_high_dur:
+        content_actions.append({
+            'title': 'Engagement Gap: Reading Without Acting',
+            'title_ko': '참여 격차: 읽기는 하지만 행동하지 않음',
+            'body': f"These pages have high dwell time but low interaction: {', '.join(low_click_high_dur[:4])}. Users consume content but don't click through. Actions: (1) Add in-content product cards with direct PLP links, (2) Insert comparison tables with 'See price' buttons, (3) Use sticky footer CTA bar, (4) Add anchor navigation for faster spec browsing.",
+            'body_ko': f"높은 체류시간 대비 낮은 상호작용: {', '.join(low_click_high_dur[:4])}. 사용자가 콘텐츠를 소비하지만 클릭하지 않음. 액션: (1) PLP 직접 링크가 있는 인콘텐츠 제품 카드 추가, (2) '가격 보기' 버튼이 있는 비교 테이블 삽입, (3) 스티키 하단 CTA 바 사용, (4) 빠른 스펙 탐색을 위한 앵커 네비게이션 추가.",
+            'priority': 'medium',
+        })
+
+    # 5. Purchase funnel gap
+    high_plp_low_purchase = []
+    for s in summaries:
+        if s['plp'] and s['plp'] > 0.3 and s['sess'] and s['sess'] > 20:
+            if not s['purchase_conv'] or s['purchase_conv'] < 0.005:
+                high_plp_low_purchase.append(f"{s['cat']} {s['country']} ({s['ct']}, PLP {s['plp']:.0%})")
+
+    if high_plp_low_purchase:
+        content_actions.append({
+            'title': 'Purchase Funnel Leakage',
+            'title_ko': '구매 퍼널 누수',
+            'body': f"Good product discovery but near-zero purchase: {', '.join(high_plp_low_purchase[:4])}. The content successfully drives users to product pages, but they drop off before purchase. This may be a PDP/checkout issue rather than a content issue. Actions: (1) Coordinate with e-commerce team on PDP conversion, (2) Add promo/bundle offers within buying guide content, (3) Test 'Add to Cart' CTAs directly in lineup comparisons.",
+            'body_ko': f"제품 발견은 잘되지만 구매는 거의 없음: {', '.join(high_plp_low_purchase[:4])}. 콘텐츠가 상품 페이지로의 이동은 성공적이나 구매 전 이탈. 콘텐츠보다 PDP/체크아웃 문제일 수 있음. 액션: (1) 이커머스팀과 PDP 전환율 개선 협의, (2) 바잉가이드 내 프로모/번들 오퍼 추가, (3) 라인업 비교 내 '장바구니 담기' CTA 직접 테스트.",
+            'priority': 'medium',
+        })
+
+    # 6. TV vs Monitor strategy
+    tv_sess = sum(s['sess'] or 0 for s in summaries if s['cat'] == 'TV')
+    mon_sess = sum(s['sess'] or 0 for s in summaries if s['cat'] == 'Monitor')
+    tv_plp = [s['plp'] for s in summaries if s['cat'] == 'TV' and s['plp'] and s['plp'] <= 1]
+    mon_plp = [s['plp'] for s in summaries if s['cat'] == 'Monitor' and s['plp'] and s['plp'] <= 1]
+    tv_avg = sum(tv_plp)/len(tv_plp) if tv_plp else 0
+    mon_avg = sum(mon_plp)/len(mon_plp) if mon_plp else 0
+
+    content_actions.append({
+        'title': 'TV vs Monitor: Category-Specific Strategy',
+        'title_ko': 'TV vs Monitor: 카테고리별 전략',
+        'body': f"TV: {tv_sess:.0f} sessions, {tv_avg:.1%} avg PLP conv. Monitor: {mon_sess:.0f} sessions, {mon_avg:.1%} avg PLP conv. {'TV drives significantly more traffic and should remain the priority content investment. Monitor content needs stronger internal link placement from product category pages to grow its audience.' if tv_sess > mon_sess * 2 else 'Both categories show comparable engagement. Ensure equal content quality and feature freshness across both.'}",
+        'body_ko': f"TV: {tv_sess:.0f} 세션, PLP 전환 {tv_avg:.1%}. Monitor: {mon_sess:.0f} 세션, PLP 전환 {mon_avg:.1%}. {'TV가 훨씬 더 많은 트래픽을 유도하며 우선 콘텐츠 투자가 필요. Monitor 콘텐츠는 카테고리 페이지에서의 내부 링크 배치 강화로 오디언스 확대 필요.' if tv_sess > mon_sess * 2 else '두 카테고리 모두 비슷한 참여도를 보임. 양쪽 모두 콘텐츠 품질과 피쳐 최신성을 동일하게 유지.'}",
+        'priority': 'medium',
+    })
+
+    narratives['content_actions'] = content_actions
+    narratives['latest_month'] = latest
+    narratives['prev_month'] = prev
+    narratives['total_sessions'] = sum(s['sess'] or 0 for s in summaries)
+    narratives['total_pages'] = len(summaries)
+
+    return narratives
 
 
 def compute_expert_analysis(all_data, months, pages):
@@ -597,10 +871,15 @@ def main():
     print(f"  Generated {len(insights)} insights")
 
     # Expert analysis
-    print("\n[4/4] Generating expert analysis...")
+    print("\n[4/5] Generating expert analysis...")
     expert = compute_expert_analysis(monthly_data, months, pages)
     print(f"  Country reports: {len(expert.get('country_reports', {}))}")
     print(f"  Category reports: {len(expert.get('category_reports', {}))}")
+
+    # Strategic narrative
+    print("\n[5/5] Building strategic narrative...")
+    narrative = compute_strategic_narrative(monthly_data, months, pages)
+    print(f"  Content actions: {len(narrative.get('content_actions', []))}")
 
     # Build output
     output = {
@@ -616,6 +895,7 @@ def main():
         'monthly_data': {},
         'insights': insights,
         'expert': expert,
+        'narrative': narrative,
     }
 
     # Serialize monthly data (convert for JSON)

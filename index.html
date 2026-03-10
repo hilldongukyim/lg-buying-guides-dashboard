@@ -448,6 +448,64 @@ body {
 .country-status-mini:hover { border-color: var(--accent); }
 .country-status-mini .csm-name { font-weight: 600; margin-bottom: 2px; }
 .country-status-mini .csm-stat { color: var(--text2); font-size: 11px; }
+
+/* Page Links Drawer */
+.links-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.25s;
+}
+.links-overlay.open { opacity: 1; pointer-events: auto; }
+.links-drawer {
+  position: fixed; top: 0; right: -400px; width: 380px; max-width: 90vw;
+  height: 100vh; background: var(--surface); border-left: 1px solid var(--border);
+  z-index: 301; display: flex; flex-direction: column;
+  transition: right 0.3s ease;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.2);
+}
+.links-drawer.open { right: 0; }
+.links-drawer-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.links-drawer-header h3 { font-size: 15px; white-space: nowrap; }
+.links-search {
+  flex: 1; padding: 6px 10px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--text); font-size: 12px; outline: none;
+}
+.links-search:focus { border-color: var(--accent); }
+.links-close {
+  background: none; border: none; color: var(--text2);
+  font-size: 22px; cursor: pointer; padding: 0 4px; line-height: 1;
+}
+.links-close:hover { color: var(--text); }
+.links-drawer-body {
+  flex: 1; overflow-y: auto; padding: 12px 16px;
+}
+.links-country-group { margin-bottom: 16px; }
+.links-country-label {
+  font-size: 12px; font-weight: 700; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+.links-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: 6px;
+  text-decoration: none; color: var(--text);
+  font-size: 13px; transition: background 0.12s;
+}
+.links-item:hover { background: var(--surface2); }
+.links-item .li-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+.links-item .li-dot.live { background: var(--green); }
+.links-item .li-dot.pending { background: var(--yellow); }
+.links-item .li-dot.offline { background: var(--text2); }
+.links-item .li-type {
+  font-size: 11px; color: var(--text2); margin-left: auto; white-space: nowrap;
+}
 </style>
 </head>
 <body>
@@ -469,6 +527,7 @@ body {
       <button data-val="light">Light</button>
     </div>
 
+    <button class="btn btn-outline" onclick="toggleLinksDrawer(true)" style="border-color:var(--accent);color:var(--accent2);"><span data-i18n="page_links_btn">Page Links</span></button>
     <button class="btn btn-primary" id="refreshBtn" onclick="refreshData()"><span data-i18n="refresh">Refresh Data</span></button>
   </div>
 </div>
@@ -480,7 +539,6 @@ body {
     <button class="tab" data-tab="behavior" data-i18n="tab_behavior">Behavior</button>
     <button class="tab" data-tab="conversion" data-i18n="tab_conversion">Conversion</button>
     <button class="tab" data-tab="insights" data-i18n="tab_insights">Insights & Actions</button>
-    <button class="tab" data-tab="status" data-i18n="tab_status">Page Status</button>
   </div>
 
   <div class="filters" id="filters"></div>
@@ -526,10 +584,17 @@ body {
     <div id="insightPanel-direction" style="display:none"></div>
   </div>
 
-  <div class="tab-content" id="tab-status">
-    <div class="section-title" data-i18n="page_status">Page Deployment Status</div>
-    <div class="status-table-wrap"><table class="status-table" id="statusTable"></table></div>
+</div>
+
+<!-- Page Links Drawer -->
+<div class="links-overlay" id="linksOverlay" onclick="toggleLinksDrawer(false)"></div>
+<div class="links-drawer" id="linksDrawer">
+  <div class="links-drawer-header">
+    <h3 data-i18n="page_links_title">Page Links</h3>
+    <input type="text" class="links-search" id="linksSearch" placeholder="Search..." oninput="filterPageLinks(this.value)">
+    <button class="links-close" onclick="toggleLinksDrawer(false)">&times;</button>
   </div>
+  <div class="links-drawer-body" id="linksDrawerBody"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -640,6 +705,11 @@ const I18N = {
     all_content_types: 'All Content',
     ctype_lineup: 'Lineup Guide',
     ctype_feature_library: 'Feature Library',
+
+    // Page links
+    page_links_btn: 'Page Links',
+    page_links_title: 'Page Links',
+    page_links_search: 'Search country or type...',
 
     // Main page insights
     main_insight_title: 'Key Insights & Actions',
@@ -793,6 +863,11 @@ const I18N = {
     all_content_types: '전체 콘텐츠',
     ctype_lineup: '라인업 가이드',
     ctype_feature_library: '피쳐 라이브러리',
+
+    // Page links
+    page_links_btn: '페이지 링크',
+    page_links_title: '페이지 링크',
+    page_links_search: '국가 또는 유형 검색...',
 
     // Main page insights
     main_insight_title: '핵심 인사이트 & 액션',
@@ -1011,7 +1086,7 @@ function render() {
   renderBehavior();
   renderConversion();
   renderInsights();
-  renderStatus();
+  renderPageLinksDrawer();
 }
 
 function renderFilters() {
@@ -1806,15 +1881,59 @@ function generateActionItems(sheets,latest,prev){
 // ============================================================
 // Status
 // ============================================================
-function renderStatus(){
-  const table=document.getElementById('statusTable');
-  let html=`<thead><tr><th>${t('th_country')}</th><th>${t('th_category')}</th><th>${t('th_type')}</th><th>${t('th_live_status')}</th><th>${t('th_ga_tagged')}</th><th>${t('th_breadcrumb')}</th><th>${t('th_feedback')}</th><th>${t('th_link')}</th></tr></thead><tbody>`;
-  (DATA.pages||[]).forEach(page=>{
-    const statusClass=page.live_status==='LIVE'?'live':page.live_status?'pending':'none';
-    html+=`<tr><td>${page.country}</td><td>${page.category}</td><td>${page.type}</td><td><span class="status-badge ${statusClass}">${page.live_status||'—'}</span></td><td>${page.ga_tagged||'—'}</td><td>${page.breadcrumb||'—'}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${page.feedback}">${page.feedback||'—'}</td><td><a href="${page.link}" target="_blank" style="color:var(--accent2);text-decoration:none;">${t('link_open')}</a></td></tr>`;
+// ============================================================
+// Page Links Drawer
+// ============================================================
+function toggleLinksDrawer(open) {
+  document.getElementById('linksOverlay').classList.toggle('open', open);
+  document.getElementById('linksDrawer').classList.toggle('open', open);
+  if (open) {
+    document.getElementById('linksSearch').value = '';
+    document.getElementById('linksSearch').placeholder = t('page_links_search');
+    filterPageLinks('');
+    setTimeout(() => document.getElementById('linksSearch').focus(), 300);
+  }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') toggleLinksDrawer(false); });
+
+function renderPageLinksDrawer() {
+  if (!DATA || !DATA.pages) return;
+  const body = document.getElementById('linksDrawerBody');
+  const grouped = {};
+  (DATA.pages || []).forEach(p => {
+    if (!p.link) return;
+    const country = p.country || 'Other';
+    if (!grouped[country]) grouped[country] = [];
+    grouped[country].push(p);
   });
-  html+='</tbody>';
-  table.innerHTML=html;
+
+  let html = '';
+  Object.keys(grouped).sort().forEach(country => {
+    html += `<div class="links-country-group" data-country="${country}">`;
+    html += `<div class="links-country-label">${country}</div>`;
+    grouped[country].forEach(p => {
+      const dotClass = p.live_status === 'LIVE' ? 'live' : p.live_status ? 'pending' : 'offline';
+      const label = [p.category, p.type].filter(Boolean).join(' · ') || 'Page';
+      html += `<a href="${p.link}" target="_blank" class="links-item" data-search="${(country + ' ' + label).toLowerCase()}">
+        <span class="li-dot ${dotClass}"></span>
+        <span>${label}</span>
+        <span class="li-type">${p.live_status || ''}</span>
+      </a>`;
+    });
+    html += `</div>`;
+  });
+  body.innerHTML = html;
+}
+
+function filterPageLinks(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('#linksDrawerBody .links-item').forEach(el => {
+    el.style.display = (!q || el.dataset.search.includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('#linksDrawerBody .links-country-group').forEach(group => {
+    const visible = group.querySelectorAll('.links-item:not([style*="display: none"])');
+    group.style.display = visible.length > 0 ? '' : 'none';
+  });
 }
 
 // ============================================================

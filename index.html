@@ -540,6 +540,213 @@ body {
 .links-item .li-type {
   font-size: 11px; color: var(--text2); margin-left: auto; white-space: nowrap;
 }
+
+/* =========== Intelligence Brief =========== */
+.intel-brief {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.intel-brief::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--green), var(--orange));
+}
+.intel-brief-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
+}
+.intel-brief-header h2 { font-size: 17px; font-weight: 700; }
+.intel-brief-header .ai-badge {
+  font-size: 10px; padding: 2px 8px; border-radius: 10px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(34,197,94,0.2));
+  color: var(--accent2); font-weight: 600; letter-spacing: 0.5px;
+}
+.intel-brief-actions { display: flex; gap: 6px; }
+.brief-item {
+  padding: 14px 16px; border-radius: 10px; margin-bottom: 10px;
+  background: var(--surface2); border-left: 4px solid;
+  transition: all 0.2s;
+}
+.brief-item:hover { transform: translateX(2px); }
+.brief-item.alert { border-left-color: var(--red); }
+.brief-item.watch { border-left-color: var(--yellow); }
+.brief-item.good { border-left-color: var(--green); }
+.brief-item .brief-signal {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  padding: 1px 8px; border-radius: 4px; margin-right: 8px;
+  vertical-align: middle;
+}
+.brief-item.alert .brief-signal { background: rgba(239,68,68,0.15); color: var(--red); }
+.brief-item.watch .brief-signal { background: rgba(234,179,8,0.15); color: var(--yellow); }
+.brief-item.good .brief-signal { background: rgba(34,197,94,0.15); color: var(--green); }
+.brief-item .brief-text { font-size: 13px; line-height: 1.7; }
+.brief-item .brief-detail {
+  display: none; margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid var(--border); font-size: 12px; color: var(--text2);
+}
+.brief-item .brief-detail.open { display: block; }
+.brief-item .see-data-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 8px; font-size: 11px; color: var(--accent2);
+  cursor: pointer; background: none; border: none;
+  transition: opacity 0.15s; opacity: 0.7;
+}
+.brief-item .see-data-btn:hover { opacity: 1; }
+.brief-skeleton {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+.brief-skeleton .skel-line {
+  height: 14px; border-radius: 4px; background: var(--surface2); margin-bottom: 10px;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.brief-no-key {
+  text-align: center; padding: 24px; color: var(--text2); font-size: 13px;
+}
+.brief-no-key .setup-link {
+  color: var(--accent2); cursor: pointer; text-decoration: underline;
+}
+
+/* =========== Signal Cards =========== */
+.signal-cards-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px; margin-bottom: 24px;
+}
+.signal-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; cursor: pointer;
+  transition: all 0.2s; border-left: 4px solid;
+}
+.signal-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+.signal-card.sig-red { border-left-color: var(--red); }
+.signal-card.sig-yellow { border-left-color: var(--yellow); }
+.signal-card.sig-green { border-left-color: var(--green); }
+.signal-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.signal-card-top h3 { font-size: 15px; font-weight: 600; }
+.signal-badge {
+  font-size: 10px; padding: 2px 10px; border-radius: 10px; font-weight: 700;
+}
+.signal-badge.sig-red { background: rgba(239,68,68,0.15); color: var(--red); }
+.signal-badge.sig-yellow { background: rgba(234,179,8,0.15); color: var(--yellow); }
+.signal-badge.sig-green { background: rgba(34,197,94,0.15); color: var(--green); }
+.signal-card-metrics {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px;
+}
+.signal-card-metrics .scm-val { font-size: 18px; font-weight: 700; }
+.signal-card-metrics .scm-label { font-size: 10px; color: var(--text2); }
+.signal-card-metrics .scm-delta { font-size: 11px; }
+.signal-card-note {
+  font-size: 12px; color: var(--text2); font-style: italic;
+  padding: 6px 10px; background: var(--surface2); border-radius: 6px;
+}
+.signal-card-expanded {
+  display: none; margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.signal-card-expanded.open { display: block; }
+
+/* =========== Action To-Do Checkboxes =========== */
+.todo-check-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 14px; border-radius: 8px; margin-bottom: 6px;
+  transition: all 0.15s; border: 1px solid transparent;
+}
+.todo-check-item:hover { background: var(--surface2); }
+.todo-check-item.done { opacity: 0.45; }
+.todo-check-item.done .todo-check-text { text-decoration: line-through; }
+.todo-check-input {
+  width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0;
+  accent-color: var(--accent);
+}
+.todo-check-text { font-size: 13px; line-height: 1.6; flex: 1; }
+.todo-check-priority {
+  font-size: 10px; padding: 1px 6px; border-radius: 4px;
+  font-weight: 600; flex-shrink: 0; margin-top: 3px;
+}
+.todo-check-priority.p-high { background: rgba(239,68,68,0.2); color: var(--red); }
+.todo-check-priority.p-medium { background: rgba(234,179,8,0.2); color: var(--yellow); }
+.todo-check-priority.p-low { background: rgba(34,197,94,0.2); color: var(--green); }
+.todo-insight-ref {
+  font-size: 11px; color: var(--accent2); cursor: pointer;
+  background: none; border: none; margin-top: 4px; opacity: 0.7;
+}
+.todo-insight-ref:hover { opacity: 1; text-decoration: underline; }
+
+/* =========== Today's Focus Widget =========== */
+.todays-focus {
+  position: fixed; bottom: 24px; right: 24px; z-index: 150;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 20px;
+  width: 320px; max-width: calc(100vw - 48px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  transition: all 0.3s; transform: translateY(0);
+}
+.todays-focus.collapsed {
+  width: auto; padding: 10px 16px; cursor: pointer;
+}
+.todays-focus.hidden { transform: translateY(calc(100% + 40px)); pointer-events: none; }
+.todays-focus-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px; font-size: 12px; font-weight: 700;
+  color: var(--accent2); text-transform: uppercase; letter-spacing: 0.5px;
+}
+.todays-focus-close {
+  background: none; border: none; color: var(--text2);
+  cursor: pointer; font-size: 16px; line-height: 1;
+}
+.todays-focus-close:hover { color: var(--text); }
+.todays-focus-item {
+  font-size: 12px; line-height: 1.6; padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.todays-focus-item:last-child { border-bottom: none; }
+
+/* =========== Settings Modal =========== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 400; display: none; align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 28px; width: 420px; max-width: 90vw;
+}
+.modal-box h3 { font-size: 16px; margin-bottom: 16px; }
+.modal-box label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 4px; }
+.modal-box input[type="password"] {
+  width: 100%; padding: 8px 12px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--text); font-size: 13px; margin-bottom: 12px;
+}
+.modal-box input[type="password"]:focus { border-color: var(--accent); outline: none; }
+.modal-box .modal-warn {
+  font-size: 11px; color: var(--yellow); margin-bottom: 12px;
+  padding: 8px; background: rgba(234,179,8,0.08); border-radius: 6px;
+}
+.modal-box .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* =========== Primary Tabs =========== */
+.primary-tabs {
+  display: flex; gap: 4px; margin-bottom: 24px;
+  background: var(--surface); border-radius: 10px; padding: 4px;
+  width: fit-content; flex-wrap: wrap;
+}
+.primary-tab {
+  padding: 8px 20px; border-radius: 8px; border: none;
+  background: transparent; color: var(--text2); font-size: 13px;
+  cursor: pointer; transition: all 0.15s; font-weight: 500;
+}
+.primary-tab.active { background: var(--accent); color: white; }
+.primary-tab:hover:not(.active) { color: var(--text); }
+.ptab-content { display: none; }
+.ptab-content.active { display: block; }
 </style>
 </head>
 <body>
@@ -562,6 +769,7 @@ body {
     </div>
 
     <button class="btn btn-outline" onclick="toggleLinksDrawer(true)" style="border-color:var(--accent);color:var(--accent2);"><span data-i18n="page_links_btn">Page Links</span></button>
+    <button class="btn btn-outline" onclick="openSettings()" title="Settings" style="padding:8px 10px;">&#9881;</button>
     <button class="btn btn-primary" id="refreshBtn" onclick="refreshData()"><span data-i18n="refresh">Refresh Data</span></button>
   </div>
 </div>
@@ -569,33 +777,41 @@ body {
 <div class="container">
   <div class="filters" id="filters"></div>
 
-  <!-- ===== INSIGHTS (Primary View) ===== -->
-  <div id="mainInsightsSummary"></div>
-
-  <div class="sub-tabs" id="insightSubTabs">
-    <button class="sub-tab active" data-stab="actions" data-i18n="stab_actions">Action To-Dos</button>
-    <button class="sub-tab" data-stab="countries" data-i18n="stab_countries">Country Reports</button>
-    <button class="sub-tab" data-stab="categories" data-i18n="stab_categories">Category Comparison</button>
-    <button class="sub-tab" data-stab="direction" data-i18n="stab_direction">Content Direction</button>
-  </div>
-  <div id="insightPanel-actions"></div>
-  <div id="insightPanel-countries" style="display:none"></div>
-  <div id="insightPanel-categories" style="display:none"></div>
-  <div id="insightPanel-direction" style="display:none"></div>
-
-  <!-- ===== DETAILED DATA (Below) ===== -->
-  <div class="detail-divider" id="detailDataSection">
-    <span data-i18n="detail_data_title">Detailed Data & Charts</span>
+  <!-- ===== PRIMARY TABS ===== -->
+  <div class="primary-tabs" id="primaryTabs">
+    <button class="primary-tab active" data-ptab="brief" data-i18n="ptab_brief">Intelligence Brief</button>
+    <button class="primary-tab" data-ptab="countries" data-i18n="ptab_countries">Country Cards</button>
+    <button class="primary-tab" data-ptab="categories" data-i18n="ptab_categories">Category Compare</button>
+    <button class="primary-tab" data-ptab="rawdata" data-i18n="ptab_rawdata">Raw Data</button>
   </div>
 
-  <div class="kpi-grid" id="kpiGrid"></div>
-
-  <div class="detail-tabs" id="detailTabs">
-    <button class="detail-tab active" data-dtab="overview" data-i18n="dtab_overview">Overview</button>
-    <button class="detail-tab" data-dtab="acquisition" data-i18n="dtab_acquisition">Acquisition</button>
-    <button class="detail-tab" data-dtab="behavior" data-i18n="dtab_behavior">Behavior</button>
-    <button class="detail-tab" data-dtab="conversion" data-i18n="dtab_conversion">Conversion</button>
+  <!-- Tab: Brief -->
+  <div class="ptab-content active" id="ptab-brief">
+    <div id="intelBriefPanel"></div>
+    <div id="mainInsightsSummary"></div>
+    <div id="actionTodosPanel"></div>
+    <div id="contentDirectionPanel"></div>
   </div>
+
+  <!-- Tab: Country Cards -->
+  <div class="ptab-content" id="ptab-countries" style="display:none">
+    <div id="signalCardsPanel"></div>
+  </div>
+
+  <!-- Tab: Categories -->
+  <div class="ptab-content" id="ptab-categories" style="display:none">
+    <div id="categoryPanel"></div>
+  </div>
+
+  <!-- Tab: Raw Data -->
+  <div class="ptab-content" id="ptab-rawdata" style="display:none">
+    <div class="kpi-grid" id="kpiGrid"></div>
+    <div class="detail-tabs" id="detailTabs">
+      <button class="detail-tab active" data-dtab="overview" data-i18n="dtab_overview">Overview</button>
+      <button class="detail-tab" data-dtab="acquisition" data-i18n="dtab_acquisition">Acquisition</button>
+      <button class="detail-tab" data-dtab="behavior" data-i18n="dtab_behavior">Behavior</button>
+      <button class="detail-tab" data-dtab="conversion" data-i18n="dtab_conversion">Conversion</button>
+    </div>
 
   <div class="detail-content active" id="dtab-overview">
     <div class="charts-grid" id="overviewCharts"></div>
@@ -617,6 +833,7 @@ body {
     <div class="kpi-grid" id="convKpis"></div>
     <div class="charts-grid" id="convCharts"></div>
   </div>
+  </div><!-- /ptab-rawdata -->
 
 </div>
 
@@ -630,6 +847,24 @@ body {
   </div>
   <div class="links-drawer-body" id="linksDrawerBody"></div>
 </div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal-box">
+    <h3 data-i18n="settings_title">API Settings</h3>
+    <label data-i18n="api_key_label">Anthropic API Key</label>
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-...">
+    <div class="modal-warn" data-i18n="api_key_warn">This key is stored in your browser's localStorage and used for client-side API calls. Do not use on shared computers.</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="clearApiKey()" data-i18n="api_key_clear">Clear Key</button>
+      <button class="btn btn-outline" onclick="closeSettings()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveApiKey()" data-i18n="api_key_save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Today's Focus Widget -->
+<div class="todays-focus hidden" id="todaysFocus"></div>
 
 <div class="toast" id="toast"></div>
 
@@ -804,6 +1039,47 @@ const I18N = {
     growing: 'Growing',
     stable: 'Stable',
     declining: 'Declining',
+
+    // Primary tabs
+    ptab_brief: 'Intelligence Brief',
+    ptab_countries: 'Country Cards',
+    ptab_categories: 'Category Compare',
+    ptab_rawdata: 'Raw Data',
+
+    // Intelligence Brief
+    brief_title: 'Intelligence Brief',
+    brief_refresh: 'Refresh Analysis',
+    brief_loading: 'Generating AI analysis...',
+    brief_error: 'Failed to generate analysis.',
+    brief_no_key: 'Set up your API key to enable AI-powered insights.',
+    brief_setup: 'Set up API Key',
+    brief_cached: 'Cached',
+    brief_signal_alert: 'ALERT',
+    brief_signal_watch: 'WATCH',
+    brief_signal_good: 'GOOD',
+    brief_see_data: 'See Data',
+
+    // Settings
+    settings_title: 'API Settings',
+    api_key_label: 'Anthropic API Key',
+    api_key_warn: 'This key is stored in localStorage and used for client-side API calls. Do not use on shared computers.',
+    api_key_save: 'Save',
+    api_key_clear: 'Clear Key',
+    api_key_saved: 'API key saved.',
+    api_key_cleared: 'API key cleared.',
+
+    // Today's Focus
+    todays_focus: "Today's Focus",
+
+    // Signal cards
+    signal_alert: 'Alert',
+    signal_watch: 'Watch',
+    signal_good: 'Good',
+    signal_context_summer: 'Summer season — peak display interest',
+    signal_context_winter: 'Winter holiday — retail peak',
+    signal_context_spring: 'Spring — product refresh cycle',
+    signal_context_fall: 'Fall — pre-holiday planning',
+    signal_expand: 'Click to expand details',
   },
   ko: {
     title: '바잉 가이드 — GA 성과 대시보드',
@@ -966,6 +1242,42 @@ const I18N = {
     growing: '성장',
     stable: '안정',
     declining: '하락',
+
+    ptab_brief: '인텔리전스 브리프',
+    ptab_countries: '국가별 카드',
+    ptab_categories: '카테고리 비교',
+    ptab_rawdata: '상세 데이터',
+
+    brief_title: '인텔리전스 브리프',
+    brief_refresh: '분석 새로고침',
+    brief_loading: 'AI 분석 생성 중...',
+    brief_error: '분석 생성에 실패했습니다.',
+    brief_no_key: 'AI 인사이트를 활성화하려면 API 키를 설정하세요.',
+    brief_setup: 'API 키 설정',
+    brief_cached: '캐시됨',
+    brief_signal_alert: '경고',
+    brief_signal_watch: '주의',
+    brief_signal_good: '양호',
+    brief_see_data: '데이터 보기',
+
+    settings_title: 'API 설정',
+    api_key_label: 'Anthropic API 키',
+    api_key_warn: '이 키는 브라우저의 localStorage에 저장되어 클라이언트 측 API 호출에 사용됩니다. 공용 컴퓨터에서는 사용하지 마세요.',
+    api_key_save: '저장',
+    api_key_clear: '키 삭제',
+    api_key_saved: 'API 키가 저장되었습니다.',
+    api_key_cleared: 'API 키가 삭제되었습니다.',
+
+    todays_focus: '오늘의 핵심',
+
+    signal_alert: '경고',
+    signal_watch: '주의',
+    signal_good: '양호',
+    signal_context_summer: '여름 시즌 — 디스플레이 관심 최고조',
+    signal_context_winter: '겨울 휴가 — 리테일 피크',
+    signal_context_spring: '봄 — 제품 리프레시 주기',
+    signal_context_fall: '가을 — 연말 시즌 대비',
+    signal_expand: '클릭하여 상세 보기',
   }
 };
 
@@ -1047,8 +1359,22 @@ document.addEventListener('DOMContentLoaded', () => {
   loadData();
 });
 
+let activePrimaryTab = 'brief';
+
 function setupTabs() {
-  // Detail data tabs
+  // Primary tabs
+  document.querySelectorAll('#primaryTabs .primary-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('#primaryTabs .primary-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.ptab-content').forEach(c => { c.classList.remove('active'); c.style.display = 'none'; });
+      tab.classList.add('active');
+      const panel = document.getElementById('ptab-' + tab.dataset.ptab);
+      if (panel) { panel.classList.add('active'); panel.style.display = 'block'; }
+      activePrimaryTab = tab.dataset.ptab;
+      if (DATA) render();
+    });
+  });
+  // Detail data tabs (inside Raw Data)
   document.querySelectorAll('#detailTabs .detail-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('#detailTabs .detail-tab').forEach(t => t.classList.remove('active'));
@@ -1057,6 +1383,266 @@ function setupTabs() {
       document.getElementById('dtab-' + tab.dataset.dtab).classList.add('active');
     });
   });
+}
+
+// ============================================================
+// Settings Modal
+// ============================================================
+function openSettings() {
+  document.getElementById('apiKeyInput').value = localStorage.getItem('lg_dash_api_key') || '';
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings() {
+  document.getElementById('settingsModal').classList.remove('open');
+}
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (key) localStorage.setItem('lg_dash_api_key', key);
+  closeSettings();
+  showToast(t('api_key_saved'));
+  if (DATA) renderIntelBrief(true);
+}
+function clearApiKey() {
+  localStorage.removeItem('lg_dash_api_key');
+  localStorage.removeItem('lg_dash_brief_cache');
+  closeSettings();
+  showToast(t('api_key_cleared'));
+  if (DATA) renderIntelBrief();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSettings(); });
+
+// ============================================================
+// Claude API — Intelligence Brief
+// ============================================================
+async function callClaudeAPI(prompt) {
+  const key = localStorage.getItem('lg_dash_api_key');
+  if (!key) throw new Error('No API key');
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2048,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err.error?.message || `API error ${resp.status}`);
+  }
+  const data = await resp.json();
+  return data.content[0].text;
+}
+
+function buildBriefPrompt() {
+  const expert = DATA.expert || {};
+  const pct = expert.per_content_type || {};
+  const reports = expert.country_reports || {};
+  const ex = expert.executive || {};
+  const insights = DATA.insights || [];
+  const months = DATA.meta.months_available || [];
+  const latest = months[months.length - 1] || '';
+
+  // Country rankings
+  const countriesBySession = Object.entries(reports)
+    .sort((a,b) => (b[1].total_sessions||0) - (a[1].total_sessions||0));
+  const top3 = countriesBySession.slice(0, 3).map(([c,r]) =>
+    `${c}: ${r.total_sessions} sessions, MoM ${(r.session_change_pct||0).toFixed(1)}%, PLP conv ${((r.avg_plp_conv||0)*100).toFixed(1)}%, status: ${r.status}`
+  ).join('\\n');
+  const bottom3 = countriesBySession.slice(-3).map(([c,r]) =>
+    `${c}: ${r.total_sessions} sessions, MoM ${(r.session_change_pct||0).toFixed(1)}%, PLP conv ${((r.avg_plp_conv||0)*100).toFixed(1)}%, status: ${r.status}`
+  ).join('\\n');
+
+  // Big MoM changes
+  const bigChanges = Object.entries(reports)
+    .filter(([,r]) => Math.abs(r.session_change_pct||0) > 20)
+    .map(([c,r]) => `${c}: ${(r.session_change_pct||0).toFixed(1)}% MoM change`)
+    .join(', ') || 'None';
+
+  // Content type split
+  let ctypeSplit = '';
+  for (const [ct, d] of Object.entries(pct)) {
+    const e = d.executive || {};
+    ctypeSplit += `${ct}: ${e.total_sessions||0} sessions, PLP ${((e.avg_plp_conv||0)*100).toFixed(1)}%, MoM ${(e.session_change_pct||0).toFixed(1)}%\\n`;
+  }
+
+  // TV vs Monitor
+  const cats = expert.category_reports || {};
+  let catSplit = '';
+  for (const [cat, d] of Object.entries(cats)) {
+    catSplit += `${cat}: ${d.total_sessions||0} sessions, PLP ${((d.avg_plp_conv||0)*100).toFixed(1)}%\\n`;
+  }
+
+  // Seasonal context
+  const now = new Date();
+  const monthNum = now.getMonth();
+  const season = monthNum >= 2 && monthNum <= 4 ? 'Spring' : monthNum >= 5 && monthNum <= 7 ? 'Summer' : monthNum >= 8 && monthNum <= 10 ? 'Fall' : 'Winter';
+  const hemisphereNote = 'Note: BR and MX are in the Southern Hemisphere (seasons reversed). Most other countries are Northern Hemisphere.';
+
+  // Top insights from data
+  const topInsights = insights.slice(0, 8).map(i => `[${i.priority}] ${i.page}: ${i.message}`).join('\\n');
+
+  return `You are a senior digital marketing analyst briefing an LG Electronics content team manager on their Buying Guide pages' GA performance.
+
+DATA CONTEXT (${latest} 2026, ${season} season):
+${hemisphereNote}
+
+OVERALL: ${ex.total_sessions||0} total sessions, ${ex.total_clicks||0} clicks, PLP conv ${((ex.avg_plp_conv||0)*100).toFixed(1)}%, Purchase conv ${((ex.avg_purchase_conv||0)*100).toFixed(2)}%, MoM session change: ${(ex.session_change_pct||0).toFixed(1)}%
+
+TOP 3 COUNTRIES (by sessions):
+${top3}
+
+BOTTOM 3 COUNTRIES:
+${bottom3}
+
+NOTABLE MoM CHANGES (>20%): ${bigChanges}
+
+CONTENT TYPE BREAKDOWN:
+${ctypeSplit}
+
+CATEGORY BREAKDOWN (TV vs Monitor):
+${catSplit}
+
+KEY DATA INSIGHTS:
+${topInsights}
+
+TASK: Generate exactly 5 intelligence briefing bullets. Each bullet must:
+1. Have a signal level: "alert" (urgent problem), "watch" (needs monitoring), or "good" (positive signal)
+2. Be specific with country names, numbers, and percentages from the data
+3. Include a concrete recommended action
+4. Be written in a confident, analytical tone
+
+Return ONLY a JSON array (no markdown, no code fences) with this structure:
+[
+  {
+    "signal": "alert|watch|good",
+    "text_en": "The English insight text with specific numbers and recommended action",
+    "text_ko": "Same insight in Korean",
+    "detail_en": "Supporting data: specific metrics that triggered this insight",
+    "detail_ko": "Same detail in Korean",
+    "data_tab": "overview|acquisition|behavior|conversion"
+  }
+]`;
+}
+
+let briefLoading = false;
+
+async function renderIntelBrief(forceRefresh = false) {
+  const el = document.getElementById('intelBriefPanel');
+  if (!el) return;
+  const apiKey = localStorage.getItem('lg_dash_api_key');
+
+  // No API key — show setup prompt
+  if (!apiKey) {
+    el.innerHTML = `<div class="intel-brief">
+      <div class="intel-brief-header"><h2>${t('brief_title')}</h2><span class="ai-badge">AI-POWERED</span></div>
+      <div class="brief-no-key">
+        <p>${t('brief_no_key')}</p>
+        <p style="margin-top:8px;"><span class="setup-link" onclick="openSettings()">${t('brief_setup')}</span></p>
+      </div>
+    </div>`;
+    return;
+  }
+
+  // Check cache
+  if (!forceRefresh) {
+    const cached = localStorage.getItem('lg_dash_brief_cache');
+    if (cached) {
+      try {
+        const { items, timestamp } = JSON.parse(cached);
+        const age = Date.now() - timestamp;
+        if (age < 3600000 && items) { // 1 hour cache
+          renderBriefItems(el, items, true);
+          return;
+        }
+      } catch {}
+    }
+  }
+
+  // Show loading skeleton
+  if (briefLoading) return;
+  briefLoading = true;
+  el.innerHTML = `<div class="intel-brief">
+    <div class="intel-brief-header"><h2>${t('brief_title')}</h2><span class="ai-badge">AI-POWERED</span></div>
+    <div class="brief-skeleton">
+      <div class="skel-line" style="width:90%"></div>
+      <div class="skel-line" style="width:75%"></div>
+      <div class="skel-line" style="width:85%"></div>
+      <div class="skel-line" style="width:60%"></div>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--text2);margin-top:8px;">${t('brief_loading')}</p>
+  </div>`;
+
+  try {
+    const prompt = buildBriefPrompt();
+    const raw = await callClaudeAPI(prompt);
+    // Parse JSON from response (handle possible code fences)
+    let cleaned = raw.trim();
+    if (cleaned.startsWith('```')) cleaned = cleaned.replace(/^```[a-z]*\n?/,'').replace(/\n?```$/,'');
+    const items = JSON.parse(cleaned);
+    localStorage.setItem('lg_dash_brief_cache', JSON.stringify({ items, timestamp: Date.now() }));
+    renderBriefItems(el, items, false);
+  } catch (e) {
+    el.innerHTML = `<div class="intel-brief">
+      <div class="intel-brief-header"><h2>${t('brief_title')}</h2><span class="ai-badge">AI-POWERED</span></div>
+      <p style="color:var(--red);font-size:13px;">${t('brief_error')} ${e.message || ''}</p>
+      <button class="btn btn-outline" style="margin-top:8px;" onclick="renderIntelBrief(true)">${t('brief_refresh')}</button>
+    </div>`;
+  } finally {
+    briefLoading = false;
+  }
+}
+
+function renderBriefItems(el, items, fromCache) {
+  const signalLabels = { alert: t('brief_signal_alert'), watch: t('brief_signal_watch'), good: t('brief_signal_good') };
+  const signalEmoji = { alert: '\uD83D\uDD34', watch: '\uD83D\uDFE1', good: '\uD83D\uDFE2' };
+
+  let html = `<div class="intel-brief">
+    <div class="intel-brief-header">
+      <div><h2>${t('brief_title')}</h2></div>
+      <div class="intel-brief-actions">
+        ${fromCache ? `<span style="font-size:10px;color:var(--text2);margin-right:6px;">${t('brief_cached')}</span>` : ''}
+        <span class="ai-badge">AI-POWERED</span>
+        <button class="btn btn-outline" style="font-size:11px;padding:4px 10px;" onclick="renderIntelBrief(true)">${t('brief_refresh')}</button>
+      </div>
+    </div>`;
+
+  (items || []).forEach((item, idx) => {
+    const sig = item.signal || 'watch';
+    const text = currentLang === 'ko' ? (item.text_ko || item.text_en) : item.text_en;
+    const detail = currentLang === 'ko' ? (item.detail_ko || item.detail_en) : item.detail_en;
+    const dtab = item.data_tab || 'overview';
+    html += `<div class="brief-item ${sig}">
+      <div class="brief-text">
+        <span class="brief-signal">${signalEmoji[sig]} ${signalLabels[sig]}</span>
+        ${text}
+      </div>
+      <button class="see-data-btn" onclick="event.stopPropagation();this.parentElement.querySelector('.brief-detail').classList.toggle('open')">
+        ${t('brief_see_data')} <span style="font-size:9px;">&#9660;</span>
+      </button>
+      <div class="brief-detail">${detail || ''}
+        <div style="margin-top:6px;"><span class="scroll-to-detail" onclick="switchToPrimaryTab('rawdata');setTimeout(()=>scrollToDetail('${dtab}'),100)">${t('detail_data_title')} &darr;</span></div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function switchToPrimaryTab(tabName) {
+  document.querySelectorAll('#primaryTabs .primary-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ptab-content').forEach(c => { c.classList.remove('active'); c.style.display = 'none'; });
+  const btn = document.querySelector(`#primaryTabs .primary-tab[data-ptab="${tabName}"]`);
+  if (btn) btn.classList.add('active');
+  const panel = document.getElementById('ptab-' + tabName);
+  if (panel) { panel.classList.add('active'); panel.style.display = 'block'; }
+  activePrimaryTab = tabName;
+  if (DATA) render();
 }
 
 function scrollToDetail(dtab) {
@@ -1138,15 +1724,25 @@ function render() {
 
   applyI18n();
   renderFilters();
-  // Primary: Insights & Analysis
-  renderMainInsights();
-  renderInsights();
-  // Detail data (below the fold)
-  renderOverview();
-  renderAcquisition();
-  renderBehavior();
-  renderConversion();
+
+  if (activePrimaryTab === 'brief') {
+    renderIntelBrief();
+    renderMainInsights();
+    renderActionTodosNew();
+    renderContentDirectionNew();
+  } else if (activePrimaryTab === 'countries') {
+    renderCountrySignalCards();
+  } else if (activePrimaryTab === 'categories') {
+    renderCategoryComparisonNew();
+  } else if (activePrimaryTab === 'rawdata') {
+    renderOverview();
+    renderAcquisition();
+    renderBehavior();
+    renderConversion();
+  }
+
   renderPageLinksDrawer();
+  renderTodaysFocus();
 }
 
 function renderFilters() {
@@ -1640,29 +2236,8 @@ function renderConversion(){
 }
 
 // ============================================================
-// Insights & Actions
+// Legacy Insights (kept for compatibility)
 // ============================================================
-function renderInsights(){
-  // Setup sub-tab switching
-  document.querySelectorAll('#insightSubTabs .sub-tab').forEach(btn=>{
-    btn.onclick=()=>{
-      document.querySelectorAll('#insightSubTabs .sub-tab').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      ['actions','countries','categories','direction'].forEach(p=>{
-        document.getElementById('insightPanel-'+p).style.display=p===btn.dataset.stab?'block':'none';
-      });
-    };
-  });
-
-  const expert=DATA.expert||{};
-  const pct=expert.per_content_type||{};
-  const activeExpert=(selectedContentType!=='ALL'&&pct[selectedContentType])?pct[selectedContentType]:expert;
-
-  renderCountryReports(activeExpert);
-  renderCategoryComparison(activeExpert);
-  renderActionTodos(activeExpert);
-  renderContentDirection(activeExpert, expert);
-}
 
 function renderExecutivePanel(activeExpert, fullExpert){
   const ex=activeExpert.executive||{};
@@ -1941,6 +2516,285 @@ function renderContentDirection(activeExpert, fullExpert){
   </div>`;
 
   el.innerHTML=html;
+}
+
+// ============================================================
+// Country Signal Cards (new)
+// ============================================================
+function getSeasonContext(countryCode) {
+  const m = new Date().getMonth();
+  const southern = ['BR', 'MX'];
+  const isSouthern = southern.includes(countryCode);
+  const effectiveMonth = isSouthern ? (m + 6) % 12 : m;
+  if (effectiveMonth >= 2 && effectiveMonth <= 4) return t('signal_context_spring');
+  if (effectiveMonth >= 5 && effectiveMonth <= 7) return t('signal_context_summer');
+  if (effectiveMonth >= 8 && effectiveMonth <= 10) return t('signal_context_fall');
+  return t('signal_context_winter');
+}
+
+function getSignalLevel(momPct) {
+  if (momPct <= -15) return 'sig-red';
+  if (momPct >= 15) return 'sig-green';
+  return 'sig-yellow';
+}
+
+function renderCountrySignalCards() {
+  const el = document.getElementById('signalCardsPanel');
+  if (!el) return;
+  const expert = DATA.expert || {};
+  const pctData = expert.per_content_type || {};
+  const activeExpert = (selectedContentType !== 'ALL' && pctData[selectedContentType]) ? pctData[selectedContentType] : expert;
+  const reports = activeExpert.country_reports || {};
+
+  let countries = Object.keys(reports).sort((a,b) => (reports[b].total_sessions||0) - (reports[a].total_sessions||0));
+  if (selectedCountry !== 'ALL') countries = countries.filter(c => c === selectedCountry);
+
+  let html = '';
+  countries.forEach(code => {
+    const r = reports[code];
+    const momPct = r.session_change_pct || 0;
+    const sig = getSignalLevel(momPct);
+    const sigLabel = sig === 'sig-red' ? t('signal_alert') : sig === 'sig-green' ? t('signal_good') : t('signal_watch');
+    const momSign = momPct >= 0 ? '+' : '';
+    const arrow = momPct > 0 ? ' &#9650;' : momPct < 0 ? ' &#9660;' : ' &#9654;';
+    const context = getSeasonContext(code);
+
+    // Analyst note (first one if available)
+    const firstNote = (r.analyst_notes && r.analyst_notes.length > 0) ? r.analyst_notes[0].notes[0] || '' : '';
+    const noteText = firstNote || context;
+
+    // Per-product breakdown for expanded view
+    let expandedHtml = '';
+    if (r.per_product) {
+      expandedHtml += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px;">';
+      for (const [cat, pd] of Object.entries(r.per_product)) {
+        if (selectedCategory !== 'ALL' && cat.toUpperCase() !== selectedCategory.toUpperCase()) continue;
+        expandedHtml += `<div style="background:var(--surface2);border-radius:8px;padding:12px;">
+          <div style="font-weight:600;font-size:12px;color:var(--accent2);margin-bottom:6px;">${cat}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:12px;">
+            <div>${t('country_sessions')}: <strong>${formatNum(pd.sessions||0)}</strong></div>
+            <div>${t('country_plp')}: <strong>${((pd.plp_conv||0)*100).toFixed(1)}%</strong></div>
+            <div>${t('country_purchase')}: <strong>${((pd.purchase_conv||0)*100).toFixed(2)}%</strong></div>
+            <div>${t('country_duration')}: <strong>${pd.duration?pd.duration+'s':'—'}</strong></div>
+          </div>
+        </div>`;
+      }
+      expandedHtml += '</div>';
+    }
+
+    // Links
+    const links = (r.links || []).filter(l => l.link).map(l => {
+      const sc = l.live_status === 'LIVE' ? 'live' : l.live_status ? 'pending' : 'offline';
+      return `<a href="${l.link}" target="_blank" class="link-chip ${sc}">${l.type || l.category || 'Link'}</a>`;
+    }).join('');
+
+    // Analyst notes
+    let notesHtml = '';
+    (r.analyst_notes || []).forEach(an => {
+      notesHtml += `<div class="analyst-note" style="margin-bottom:6px;"><strong>${an.page}</strong>${an.notes.map(n=>'<div style="margin-top:3px;">'+n+'</div>').join('')}</div>`;
+    });
+
+    html += `<div class="signal-card ${sig}" onclick="this.querySelector('.signal-card-expanded').classList.toggle('open')">
+      <div class="signal-card-top">
+        <h3>${countryName(code)} (${code})</h3>
+        <span class="signal-badge ${sig}">${sigLabel}</span>
+      </div>
+      <div class="signal-card-metrics">
+        <div><div class="scm-val">${formatNum(r.total_sessions||0)}</div><div class="scm-label">${t('country_sessions')}</div></div>
+        <div><div class="scm-val"><span class="kpi-change ${momPct>=0?'up':'down'}">${momSign}${momPct.toFixed(1)}%${arrow}</span></div><div class="scm-label">MoM</div></div>
+        <div><div class="scm-val">${((r.avg_plp_conv||0)*100).toFixed(1)}%</div><div class="scm-label">${t('country_plp')}</div></div>
+      </div>
+      <div class="signal-card-note">${noteText}</div>
+      <div class="signal-card-expanded">
+        <div class="country-metrics" style="margin-bottom:12px;">
+          <div class="country-metric"><div class="cm-value">${formatNum(r.total_clicks||0)}</div><div class="cm-label">${t('country_clicks')}</div></div>
+          <div class="country-metric"><div class="cm-value">${((r.avg_purchase_conv||0)*100).toFixed(2)}%</div><div class="cm-label">${t('country_purchase')}</div></div>
+          <div class="country-metric"><div class="cm-value">${r.avg_duration?r.avg_duration+'s':'—'}</div><div class="cm-label">${t('country_duration')}</div></div>
+        </div>
+        ${expandedHtml}
+        ${links ? `<div class="link-chips" style="margin-bottom:8px;">${links}</div>` : ''}
+        ${notesHtml}
+      </div>
+      <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--text2);">${t('signal_expand')}</div>
+    </div>`;
+  });
+
+  el.innerHTML = html ? `<div class="signal-cards-grid">${html}</div>` : '<p style="color:var(--text2);">No country data available.</p>';
+}
+
+// ============================================================
+// Action To-Dos (new with checkboxes)
+// ============================================================
+function getTodoState() {
+  try { return JSON.parse(localStorage.getItem('lg_dash_todos') || '{}'); } catch { return {}; }
+}
+function setTodoState(id, done) {
+  const state = getTodoState();
+  state[id] = done;
+  localStorage.setItem('lg_dash_todos', JSON.stringify(state));
+}
+
+function renderActionTodosNew() {
+  const el = document.getElementById('actionTodosPanel');
+  if (!el) return;
+  const todoState = getTodoState();
+
+  const expert = DATA.expert || {};
+  const pctData = expert.per_content_type || {};
+  const activeExpert = (selectedContentType !== 'ALL' && pctData[selectedContentType]) ? pctData[selectedContentType] : expert;
+
+  const filteredInsights = (DATA.insights || []).filter(ins => {
+    if (selectedCountry !== 'ALL' && !ins.page.includes(selectedCountry)) return false;
+    if (selectedCategory !== 'ALL' && !ins.page.includes(selectedCategory)) return false;
+    if (selectedContentType !== 'ALL' && ins.content_type && ins.content_type !== 'all' && ins.content_type !== selectedContentType) return false;
+    return true;
+  }).sort((a,b) => {const p={high:0,medium:1};return(p[a.priority]||2)-(p[b.priority]||2);});
+
+  const dtabMap = {Sessions:'acquisition',PLP:'conversion',SEO:'acquisition',Engagement:'behavior',Funnel:'conversion','Content Strategy':'overview','Market Strategy':'overview','Conversion Efficiency':'conversion'};
+  const priorityLabels = {high: t('act_priority_high'), medium: t('act_priority_medium'), low: t('act_priority_low')};
+
+  let html = `<div class="exec-summary"><h3>${t('act_title')}</h3>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:14px;">${filteredInsights.length} insights detected. Check off completed items — state persists in your browser.</p>`;
+
+  filteredInsights.forEach((ins, idx) => {
+    const id = 'todo_' + idx + '_' + ins.page.replace(/\s/g,'_');
+    const isDone = todoState[id] || false;
+    const pCls = ins.priority === 'high' ? 'p-high' : ins.priority === 'medium' ? 'p-medium' : 'p-low';
+    const dtab = dtabMap[ins.metric] || 'overview';
+    html += `<div class="todo-check-item ${isDone ? 'done' : ''}">
+      <input type="checkbox" class="todo-check-input" ${isDone?'checked':''} onchange="setTodoState('${id}',this.checked);this.closest('.todo-check-item').classList.toggle('done',this.checked)">
+      <div class="todo-check-text">
+        <strong style="color:var(--accent2);">${ins.page}</strong><br>
+        ${ins.message}
+        <div><button class="todo-insight-ref" onclick="event.stopPropagation();switchToPrimaryTab('rawdata');setTimeout(()=>scrollToDetail('${dtab}'),100)">${t('brief_see_data')} &rarr;</button></div>
+      </div>
+      <span class="todo-check-priority ${pCls}">${priorityLabels[ins.priority] || ins.priority}</span>
+    </div>`;
+  });
+
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ============================================================
+// Content Direction (new panel)
+// ============================================================
+function renderContentDirectionNew() {
+  const el = document.getElementById('contentDirectionPanel');
+  if (!el) return;
+  const narr = DATA.narrative || {};
+  const actions = narr.content_actions || [];
+  const lang = currentLang;
+
+  const expert = DATA.expert || {};
+  const pctData = expert.per_content_type || {};
+  const activeExpert = (selectedContentType !== 'ALL' && pctData[selectedContentType]) ? pctData[selectedContentType] : expert;
+
+  let html = `<div class="exec-summary" style="margin-top:20px;"><h3>${t('dir_title')}</h3>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:8px;">${lang==='ko'?'20년차 크리에이티브 전략가 & 데이터 인사이트 전문가의 종합 분석':'Comprehensive analysis from a senior creative strategist & data insight expert'}</p>
+  </div>`;
+
+  const priorityColors = {high:'var(--red)',medium:'var(--yellow)',low:'var(--accent2)'};
+  const priorityLabels = {high:lang==='ko'?'높음':'HIGH',medium:lang==='ko'?'중간':'MEDIUM',low:lang==='ko'?'낮음':'LOW'};
+
+  actions.forEach(a => {
+    const title = lang === 'ko' ? a.title_ko : a.title;
+    const body = lang === 'ko' ? a.body_ko : a.body;
+    const color = priorityColors[a.priority] || 'var(--accent2)';
+    html += `<div class="direction-card" style="border-left-color:${color};">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <h4 style="color:${color};margin:0;">${title}</h4>
+        <span class="status-pill" style="background:${color}20;color:${color};font-size:10px;">${priorityLabels[a.priority]}</span>
+      </div>
+      <p>${body}</p>
+    </div>`;
+  });
+
+  // Country status classification
+  const reports = activeExpert.country_reports || {};
+  const growing = [], stable = [], declining = [];
+  Object.keys(reports).forEach(code => {
+    const r = reports[code];
+    const label = `<strong>${countryName(code)}</strong> (${formatNum(r.total_sessions||0)} sess, PLP ${((r.avg_plp_conv||0)*100).toFixed(0)}%)`;
+    if (r.status === 'growing') growing.push(label);
+    else if (r.status === 'stable') stable.push(label);
+    else declining.push(label);
+  });
+
+  html += `<div class="exec-summary" style="margin-top:16px;"><h3>${lang==='ko'?'국가별 상태 분류':'Country Status Classification'}</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:12px;">
+      ${growing.length?`<div style="background:rgba(34,197,94,0.08);border-radius:8px;padding:14px;border-left:3px solid var(--green);"><div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:6px;">${t('growing')} &#9650;</div>${growing.join('<br>')}</div>`:''}
+      ${stable.length?`<div style="background:rgba(99,102,241,0.08);border-radius:8px;padding:14px;border-left:3px solid var(--accent2);"><div style="font-size:12px;font-weight:700;color:var(--accent2);margin-bottom:6px;">${t('stable')} &#9654;</div>${stable.join('<br>')}</div>`:''}
+      ${declining.length?`<div style="background:rgba(239,68,68,0.08);border-radius:8px;padding:14px;border-left:3px solid var(--red);"><div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px;">${t('declining')} &#9660;</div>${declining.join('<br>')}</div>`:''}
+    </div>
+  </div>`;
+
+  el.innerHTML = html;
+}
+
+// ============================================================
+// Category Comparison (new panel target)
+// ============================================================
+function renderCategoryComparisonNew() {
+  const el = document.getElementById('categoryPanel');
+  if (!el) return;
+  const expert = DATA.expert || {};
+  const pctData = expert.per_content_type || {};
+  const activeExpert = (selectedContentType !== 'ALL' && pctData[selectedContentType]) ? pctData[selectedContentType] : expert;
+  const cats = activeExpert.category_reports || {};
+  let html = '';
+  Object.keys(cats).forEach(cat => {
+    const c = cats[cat];
+    html += `<div class="exec-summary" style="margin-bottom:20px;">
+      <h3>${cat}</h3>
+      <div class="country-metrics" style="margin-bottom:16px;">
+        <div class="country-metric"><div class="cm-value">${formatNum(c.total_sessions||0)}</div><div class="cm-label">${t('cat_total_sessions')}</div></div>
+        <div class="country-metric"><div class="cm-value">${((c.avg_plp_conv||0)*100).toFixed(1)}%</div><div class="cm-label">${t('cat_avg_plp')}</div></div>
+        <div class="country-metric"><div class="cm-value">${c.countries_count||0}</div><div class="cm-label">${t('cat_countries')}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
+        <div><strong style="font-size:12px;color:var(--text2);">${t('cat_rank_sessions')}</strong>
+          <table class="ranking-table">${(c.ranked_sessions||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${countryName(r[0])}</td><td>${formatNum(r[1]||0)}</td></tr>`).join('')}</table>
+        </div>
+        <div><strong style="font-size:12px;color:var(--text2);">${t('cat_rank_plp')}</strong>
+          <table class="ranking-table">${(c.ranked_plp||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${countryName(r[0])}</td><td>${(r[1]*100).toFixed(1)}%</td></tr>`).join('')}</table>
+        </div>
+        <div><strong style="font-size:12px;color:var(--text2);">${t('cat_rank_duration')}</strong>
+          <table class="ranking-table">${(c.ranked_duration||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${countryName(r[0])}</td><td>${r[1]||0}s</td></tr>`).join('')}</table>
+        </div>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html || '<p style="color:var(--text2);">No category data.</p>';
+}
+
+// ============================================================
+// Today's Focus Widget
+// ============================================================
+function renderTodaysFocus() {
+  const el = document.getElementById('todaysFocus');
+  if (!el) return;
+  const insights = (DATA.insights || []).filter(i => i.priority === 'high').slice(0, 2);
+  const todoState = getTodoState();
+
+  if (insights.length === 0) {
+    el.classList.add('hidden');
+    return;
+  }
+
+  const isCollapsed = localStorage.getItem('lg_dash_focus_collapsed') === '1';
+  if (isCollapsed) {
+    el.className = 'todays-focus collapsed';
+    el.innerHTML = `<span style="font-size:12px;font-weight:600;color:var(--accent2);" onclick="localStorage.removeItem('lg_dash_focus_collapsed');renderTodaysFocus();">${t('todays_focus')} (${insights.length})</span>`;
+    return;
+  }
+
+  el.className = 'todays-focus';
+  let html = `<div class="todays-focus-header"><span>${t('todays_focus')}</span><button class="todays-focus-close" onclick="localStorage.setItem('lg_dash_focus_collapsed','1');renderTodaysFocus();">&times;</button></div>`;
+  insights.forEach(ins => {
+    html += `<div class="todays-focus-item"><strong style="color:var(--red);font-size:11px;">${ins.page}</strong><br>${ins.message.substring(0, 120)}${ins.message.length > 120 ? '...' : ''}</div>`;
+  });
+  el.innerHTML = html;
 }
 
 function generateActionItems(sheets,latest,prev){
